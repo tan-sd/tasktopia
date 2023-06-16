@@ -1,12 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import InkFish from './assets/components/InkFish';
 
 export default function App() {
   return (
+    <>
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <Text>Choose your pets</Text>
       <StatusBar style="auto" />
     </View>
+    <InkFish />
+    </>
   );
 }
 
