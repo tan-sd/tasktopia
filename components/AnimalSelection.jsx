@@ -6,15 +6,32 @@ import useControls from 'r3f-native-orbitcontrols';
 import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from 'react-native';
 
 function PuduModel(props) {
+  const defaultAnimation = useRef(null);
+
+  const handleClick = () => {
+    const clickAnimation = mixer.current.clipAction(gltf.animations[2]);
+
+    // mixer.current.stopAllAction();
+    clickAnimation.reset().setLoop(THREE.LoopOnce).play();
+
+    clickAnimation.clampWhenFinished = true;
+    clickAnimation.paused = false;
+    clickAnimation.setLoop(THREE.LoopOnce, 1, () => {
+      defaultAnimation.current.enabled = true;
+      defaultAnimation.current.play();
+      // mixer.current.clipAction(gltf.animations[13]).play();
+    })
+  }
+
   const [base] = useLoader(TextureLoader, [
-      require('../../assets/animals/textures/T_Pudu.png'),
+      require('../assets/animals/textures/T_Pudu.png'),
       // require('./assets/Airmax/textures/Normal.jpg'),
       // require('./assets/Airmax/textures/Roughness.png'),
     ]);
 
   const gltf = useLoader(
       GLTFLoader,
-      require('../../assets/animals/models/GLTF/animations/Pudu_Animations.glb'),
+      require('../assets/animals/models/GLTF/animations/Pudu_Animations.glb'),
       // (loader) => {
   
       // }
@@ -32,10 +49,17 @@ function PuduModel(props) {
       });
       if (gltf.animations && gltf.animations.length > 0) {
         mixer.current = new THREE.AnimationMixer(gltf.scene);
-        const action = mixer.current.clipAction(gltf.animations[13]);
-        action.play();
+        defaultAnimation.current = mixer.current.clipAction(gltf.animations[13]);
+        defaultAnimation.current.play();
+
+        // const action = mixer.current.clipAction(gltf.animations[13]);
+        // action.play();
+
+        return () => {
+          mixer.current.stopAllAction()
+        }
       }
-    }, [gltf]);
+    }, [gltf.animations]);
 
     useFrame((state, delta) => {
       // let { x, y, z } = props.animatedSensor.sensor.value;
@@ -50,21 +74,38 @@ function PuduModel(props) {
 
   return (
       <mesh rotation={[0.1, -0.4, 0]} position={[0, -1.5, 0]}>
-          <primitive object={gltf.scene} scale={2.5}/>
+          <primitive object={gltf.scene} scale={2.5} onClick={handleClick}/>
       </mesh>
   );
 }
 
 function SparrowModel(props) {
+  const defaultAnimation = useRef(null);
+
+  const handleClick = () => {
+    const clickAnimation = mixer.current.clipAction(gltf.animations[2]);
+
+    // mixer.current.stopAllAction();
+    clickAnimation.reset().setLoop(THREE.LoopOnce).play();
+
+    clickAnimation.clampWhenFinished = true;
+    clickAnimation.paused = false;
+    clickAnimation.setLoop(THREE.LoopOnce, 1, () => {
+      defaultAnimation.current.enabled = true;
+      defaultAnimation.current.play();
+      // mixer.current.clipAction(gltf.animations[13]).play();
+    })  
+  }
+
   const [base] = useLoader(TextureLoader, [
-      require('../../assets/animals/textures/T_Sparrow.png'),
+      require('../assets/animals/textures/T_Sparrow.png'),
       // require('./assets/Airmax/textures/Normal.jpg'),
       // require('./assets/Airmax/textures/Roughness.png'),
     ]);
 
   const gltf = useLoader(
       GLTFLoader,
-      require('../../assets/animals/models/GLTF/animations/Sparrow_Animations.glb'),
+      require('../assets/animals/models/GLTF/animations/Sparrow_Animations.glb'),
       // (loader) => {
   
       // }
@@ -82,10 +123,17 @@ function SparrowModel(props) {
       });
       if (gltf.animations && gltf.animations.length > 0) {
         mixer.current = new THREE.AnimationMixer(gltf.scene);
-        const action = mixer.current.clipAction(gltf.animations[6]);
-        action.play();
+        defaultAnimation.current = mixer.current.clipAction(gltf.animations[13]);
+        defaultAnimation.current.play();
+
+        // const action = mixer.current.clipAction(gltf.animations[13]);
+        // action.play();
+
+        return () => {
+          mixer.current.stopAllAction()
+        }
       }
-    }, [gltf]);
+    }, [gltf.animations]);
 
     useFrame((state, delta) => {
       // let { x, y, z } = props.animatedSensor.sensor.value;
@@ -100,21 +148,38 @@ function SparrowModel(props) {
 
   return (
       <mesh rotation={[0.1, -0.4, 0]} position={[0, -1.5, 0]}>
-          <primitive object={gltf.scene} scale={2.5}/>
+          <primitive object={gltf.scene} scale={2.5} onClick={handleClick}/>
       </mesh>
   );
 }
 
 function InkFishModel(props) {
+  const defaultAnimation = useRef(null);
+
+  const handleClick = () => {
+    const clickAnimation = mixer.current.clipAction(gltf.animations[2]);
+
+    // mixer.current.stopAllAction();
+    clickAnimation.reset().setLoop(THREE.LoopOnce).play();
+
+    clickAnimation.clampWhenFinished = true;
+    clickAnimation.paused = false;
+    clickAnimation.setLoop(THREE.LoopOnce, 1, () => {
+      defaultAnimation.current.enabled = true;
+      defaultAnimation.current.play();
+      // mixer.current.clipAction(gltf.animations[13]).play();
+    })
+  }
+
     const [base] = useLoader(TextureLoader, [
-        require('../../assets/animals/textures/T_Inkfish.png'),
+        require('../assets/animals/textures/T_Inkfish.png'),
         // require('./assets/Airmax/textures/Normal.jpg'),
         // require('./assets/Airmax/textures/Roughness.png'),
       ]);
 
     const gltf = useLoader(
         GLTFLoader,
-        require('../../assets/animals/models/GLTF/animations/Inkfish_Animations.glb'),
+        require('../assets/animals/models/GLTF/animations/Inkfish_Animations.glb'),
         // (loader) => {
     
         // }
@@ -130,12 +195,19 @@ function InkFishModel(props) {
             // child.material.roughnessMap = rough;
           }
         });
-        if (gltf.animations && gltf.animations.length > 0) {
-          mixer.current = new THREE.AnimationMixer(gltf.scene);
-          const action = mixer.current.clipAction(gltf.animations[6]);
-          action.play();
-        }
-      }, [gltf]);
+      if (gltf.animations && gltf.animations.length > 0) {
+              mixer.current = new THREE.AnimationMixer(gltf.scene);
+              defaultAnimation.current = mixer.current.clipAction(gltf.animations[13]);
+              defaultAnimation.current.play();
+
+              // const action = mixer.current.clipAction(gltf.animations[13]);
+              // action.play();
+
+              return () => {
+                mixer.current.stopAllAction()
+              }
+            }
+          }, [gltf.animations]);
 
       useFrame((state, delta) => {
         // let { x, y, z } = props.animatedSensor.sensor.value;
@@ -150,7 +222,7 @@ function InkFishModel(props) {
 
     return (
         <mesh rotation={[0.1, -0.4, 0]} position={[0, -1.5, 0]}>
-            <primitive object={gltf.scene} scale={2.5}/>
+            <primitive object={gltf.scene} scale={2.5} onClick={handleClick}/>
         </mesh>
     );
 }
@@ -170,7 +242,7 @@ export default function AnimalSelection() {
             return pixelStorei(...args);
         }
       };
-    }
+    } 
 
     const [selectedModel, setSelectedModel] = useState('pudu');
     const [OrbitControls, events] = useControls();
@@ -191,21 +263,22 @@ export default function AnimalSelection() {
                     </Suspense>
             </Canvas>
             <View style={styles.imageWrapper}>
-              <TouchableOpacity activeOpacity={0.5} onPress={() => setSelectedModel('pudu')}>
+              <TouchableOpacity activeOpacity={0.5} onPress={() => 
+                setSelectedModel('pudu')}>
                 <Image
-                source={require('../../assets/animals/img/Pudu.png')}
+                source={require('../assets/animals/img/Pudu.png')}
                 style={styles.buttonImageIcon}
                 />
               </TouchableOpacity>
               <TouchableOpacity activeOpacity={0.5} onPress={() => setSelectedModel('sparrow')}>
                 <Image
-                source={require('../../assets/animals/img/Sparrow.png')}
+                source={require('../assets/animals/img/Sparrow.png')}
                 style={styles.buttonImageIcon}
                 />
               </TouchableOpacity>
               <TouchableOpacity activeOpacity={0.5} onPress={() => setSelectedModel('inkfish')}>
                 <Image
-                source={require('../../assets/animals/img/InkFish.png')}
+                source={require('../assets/animals/img/InkFish.png')}
                 style={styles.buttonImageIcon}
                 />
               </TouchableOpacity>
