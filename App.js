@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import AnimalSelection from './assets/components/AnimalSelection';
+import AnimalSelection from './components/AnimalSelection';
 
 export default function App() {
   return (
