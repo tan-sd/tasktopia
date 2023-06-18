@@ -2,6 +2,6 @@
 module.exports = {
     resolver: {
       sourceExts: ['js', 'jsx', 'json', 'ts', 'tsx', 'cjs'],
-      assetExts: ['glb', 'gltf', 'mtl', 'obj', 'png', 'jpg'],
+      assetExts: ['glb', 'gltf', 'mtl', 'obj', 'png', 'jpg', 'ttf', 'otf'],
     },
   }
