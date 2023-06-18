@@ -8,7 +8,7 @@ export default function LoginPage({navigation}) {
 
     return (
         <>
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
             <StatusBar/>
             <Text
                 style={styles.homeHeader}
@@ -34,6 +34,10 @@ export default function LoginPage({navigation}) {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fedb7d',
+    },
     textInput: {
         height: 40,
         margin: 12,

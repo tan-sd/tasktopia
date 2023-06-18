@@ -5,7 +5,7 @@ import * as React from 'react';
 export default function RewardsPage({navigation}) {
     return (
         <>
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
             <StatusBar/>
             <Text
                 style={styles.rewardsHeader}
@@ -20,6 +20,10 @@ export default function RewardsPage({navigation}) {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fedb7d',
+    },
     rewardsHeader: {
         textAlign: 'center'
     }
