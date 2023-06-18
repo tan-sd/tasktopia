@@ -4,6 +4,7 @@ import * as React from 'react';
 // import * as Keychain from 'react-native-keychain';
 // import CustomButton from "../components/customButton";
 import{useForm, Controller} from "react-hook-form";
+import { useFonts } from 'expo-font';
 
 export default function LoginPage({navigation}) {
     const [username, setUsername] = React.useState('');
@@ -72,9 +73,18 @@ export default function LoginPage({navigation}) {
     //         }
     //       };
 
+    const [loaded] = useFonts({
+        GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
+        GothamBook: require('../assets/fonts/Gotham-Book.otf')
+      });
+
+      if (!loaded) {
+        return null;
+      }
+
     return (
         <>
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
             <StatusBar/>
             <Image source={require('../assets/tasktopia-logo.png')} style={[styles.logo, {height: height*0.3}]} resizeMode="contain"   />
 
@@ -117,19 +127,25 @@ export default function LoginPage({navigation}) {
             
             
             <View style={styles.login}>
-            {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AnimalSelection')}> */}
             <TouchableOpacity style={styles.button} onPress={handleSubmit(onLogin)}>
-                <Text style={{textAlign: 'center', marginTop: 10, color:'white'}}>Login</Text>
+                <Text style={{textAlign: 'center', marginTop: 10, color:'white',fontFamily: 'GothamBold'}}>Login</Text>
             </TouchableOpacity>
             </View>
             {/* <CustomButton onPress={onLogin} text="Login" /> */}
 
+            {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AnimalSelection')}>
+                <Text style={{textAlign: 'center', marginTop: 10, color:'white', fontFamily: 'GothamBold'}}>Login</Text>
+            </TouchableOpacity></View> */}
         </SafeAreaView>
         </>
     )
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fedb7d',
+    },
     textInput: {
         height: 40,
         margin: 12,
@@ -146,8 +162,8 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     labels:{
-        // color: '#EF524A',
-        color: 'black',
+        color: '#EF524A',
+        fontFamily: "GothamBook"
     },
     middleSection:{
         display: 'flex',

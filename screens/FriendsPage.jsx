@@ -5,7 +5,7 @@ import * as React from 'react';
 export default function FriendsPage({navigation}) {
     return (
         <>
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
             <StatusBar/>
             <Text
                 style={styles.friendsHeader}
@@ -20,6 +20,10 @@ export default function FriendsPage({navigation}) {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fedb7d',
+    },
     friendsHeader: {
         textAlign: 'center'
     }

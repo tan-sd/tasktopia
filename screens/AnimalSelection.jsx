@@ -258,7 +258,7 @@ export default function AnimalSelection({navigation}) {
 
     return (
         <>
-        <SafeAreaView style={{flex: 1}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: '#fedb7d'}}>
         <View style={styles.container} {...events}>
           <View style={styles.header}>
             <Text>Choose your pets</Text>
@@ -304,13 +304,14 @@ export default function AnimalSelection({navigation}) {
                 />
               </TouchableOpacity>
             </View>
-            <View style={{marginBottom: 50}}>
+            <View style={{paddingBottom: '10%'}}>
             <Button
               // onPress={onPressLearnMore}
               title="Confirm"
               color="black"
-              accessibilityLabel="Learn more about this purple button"
-              onPress={() => navigation.navigate('HomePage')} />
+              // accessibilityLabel="Learn more about this purple button"
+              onPress={() => navigation.navigate('HomePage')}
+              ></Button>
             </View>
         </View>
         </SafeAreaView>
@@ -347,6 +348,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#fedb7d',
     // height: 750
   },
   canvas: {

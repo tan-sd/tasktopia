@@ -5,7 +5,7 @@ import * as React from 'react';
 export default function HomePage({navigation}) {
     return (
         <>
-        <SafeAreaView>
+        <SafeAreaView style={styles.container}>
             <StatusBar/>
             <Text
                 style={styles.homeHeader}
@@ -20,6 +20,10 @@ export default function HomePage({navigation}) {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#fedb7d',
+    },
     homeHeader: {
         textAlign: 'center'
     }
