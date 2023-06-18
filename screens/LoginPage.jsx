@@ -16,6 +16,7 @@ export default function LoginPage({navigation}) {
     const onLogin = (data) => {
         console.log(data);
         console.warn('Login');
+        navigation.navigate('AnimalSelection')
     }
     // const [preLogTest, setPreLogTest] = React.useState(false);
 
@@ -129,6 +130,7 @@ export default function LoginPage({navigation}) {
             <View style={styles.login}>
             <TouchableOpacity style={styles.button} onPress={handleSubmit(onLogin)}>
                 <Text style={{textAlign: 'center', marginTop: 10, color:'white',fontFamily: 'GothamBold'}}>Login</Text>
+
             </TouchableOpacity>
             </View>
             {/* <CustomButton onPress={onLogin} text="Login" /> */}
