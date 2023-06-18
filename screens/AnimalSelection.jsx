@@ -6,6 +6,7 @@ import useControls from 'r3f-native-orbitcontrols';
 import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native';
+import { useFonts } from 'expo-font';
 // import { useEnvironment } from '@react-three/drei';
 import HomePage from './HomePage';
 
@@ -256,12 +257,21 @@ export default function AnimalSelection({navigation}) {
       setSelectedBgImg(imageName)
     }
 
+    const [loaded] = useFonts({
+      GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
+      GothamBook: require('../assets/fonts/Gotham-Book.otf')
+    });
+
+    if (!loaded) {
+      return null;
+    }
+
     return (
         <>
         <SafeAreaView style={{flex: 1, backgroundColor: '#fedb7d'}}>
         <View style={styles.container} {...events}>
           <View style={styles.header}>
-            <Text>Choose your pets</Text>
+            <Text style={{...styles.gothamBold, fontSize: 25}}>Choose your pet!</Text>
             <StatusBar style="auto" />
           </View>
           <Image
@@ -304,14 +314,12 @@ export default function AnimalSelection({navigation}) {
                 />
               </TouchableOpacity>
             </View>
-            <View style={{paddingBottom: '10%'}}>
-            <Button
-              // onPress={onPressLearnMore}
-              title="Confirm"
-              color="black"
-              // accessibilityLabel="Learn more about this purple button"
-              onPress={() => navigation.navigate('HomePage')}
-              ></Button>
+            <View style={{paddingBottom: 10}}>
+              <TouchableOpacity
+              onPress={() => navigation.navigate('HomePage')} style={styles.confirmButton}
+              >
+                <Text style={{...styles.gothamBook, textAlign: 'center'}}>Confirm</Text>
+              </TouchableOpacity>
             </View>
         </View>
         </SafeAreaView>
@@ -356,7 +364,7 @@ const styles = StyleSheet.create({
     // aspectRatio: 1,
     borderColor: 'black',
     borderRadius: 30,
-    borderWidth: 1
+    // borderWidth: 1
   },
   buttonImageIcon: {
     // padding: 10,
@@ -379,5 +387,20 @@ const styles = StyleSheet.create({
     height: '56%',
     borderRadius: 30,
     top: 100
+  },
+  confirmButton: {
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 10,
+    padding: 15,
+    width: 100,
+    backgroundColor: '#fff',
+    marginTop: 20,
+  },
+  gothamBold: {
+    fontFamily: 'GothamBold'
+  },
+  gothamBook: {
+      fontFamily: 'GothamBook'
   }
 });
