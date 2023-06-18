@@ -5,6 +5,7 @@ import { TextureLoader } from 'expo-three';
 import useControls from 'r3f-native-orbitcontrols';
 import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+// import { useEnvironment } from '@react-three/drei';
 import HomePage from './HomePage';
 
 function PuduModel(props) {
@@ -76,7 +77,7 @@ function PuduModel(props) {
 
   return (
       <mesh rotation={[0.1, -0.4, 0]} position={[0, -1.5, 0]}>
-          <primitive object={gltf.scene} scale={2.5} onClick={handleClick}/>
+          <primitive object={gltf.scene} scale={3} onClick={handleClick}/>
       </mesh>
   );
 }
@@ -150,7 +151,7 @@ function SparrowModel(props) {
 
   return (
       <mesh rotation={[0.1, -0.4, 0]} position={[0, -1.5, 0]}>
-          <primitive object={gltf.scene} scale={2.5} onClick={handleClick}/>
+          <primitive object={gltf.scene} scale={3} onClick={handleClick}/>
       </mesh>
   );
 }
@@ -224,7 +225,7 @@ function InkFishModel(props) {
 
     return (
         <mesh rotation={[0.1, -0.4, 0]} position={[0, -1.5, 0]}>
-            <primitive object={gltf.scene} scale={2.5} onClick={handleClick}/>
+            <primitive object={gltf.scene} scale={3} onClick={handleClick}/>
         </mesh>
     );
 }
@@ -247,7 +248,12 @@ export default function AnimalSelection({navigation}) {
     } 
 
     const [selectedModel, setSelectedModel] = useState('pudu');
+    const [selectedBgImg, setSelectedBgImg] = useState('pudu');
     const [OrbitControls, events] = useControls();
+
+    const handleImageChange = (imageName) => {
+      setSelectedBgImg(imageName)
+    }
 
     return (
         <>
@@ -256,6 +262,11 @@ export default function AnimalSelection({navigation}) {
             <Text>Choose your pets</Text>
             <StatusBar style="auto" />
           </View>
+          <Image
+            source={getImageSource(selectedBgImg)}
+            style={{ position: 'absolute', width: '80%', height: '50%', borderRadius: 30, top: 150}}
+            resizeMode="cover"
+          />
             <Canvas
                 onCreated={onCreated}
                 style={styles.canvas}>
@@ -270,19 +281,21 @@ export default function AnimalSelection({navigation}) {
             </Canvas>
             <View style={styles.imageWrapper}>
               <TouchableOpacity activeOpacity={0.5} onPress={() => 
-                setSelectedModel('pudu')}>
+                [setSelectedModel('pudu'), handleImageChange('image1')]}>
                 <Image
                 source={require('../assets/animals/img/Pudu.png')}
                 style={styles.buttonImageIcon}
                 />
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.5} onPress={() => setSelectedModel('sparrow')}>
+              <TouchableOpacity activeOpacity={0.5} onPress={() =>
+                [setSelectedModel('sparrow'), handleImageChange('image2')]}>
                 <Image
                 source={require('../assets/animals/img/Sparrow.png')}
                 style={styles.buttonImageIcon}
                 />
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.5} onPress={() => setSelectedModel('inkfish')}>
+              <TouchableOpacity activeOpacity={0.5} onPress={() =>
+                [setSelectedModel('inkfish'), handleImageChange('image3')]}>
                 <Image
                 source={require('../assets/animals/img/InkFish.png')}
                 style={styles.buttonImageIcon}
@@ -301,6 +314,21 @@ export default function AnimalSelection({navigation}) {
         </>
     )
 }
+
+const getImageSource = (imageName) => {
+  switch (imageName) {
+    case 'image1':
+      return require('../assets/img/background/pudu-background.png');
+    
+    case 'image2':
+      return require('../assets/img/background/sparrow-background.png');
+    
+    case 'image3':
+      return require('../assets/img/background/inkfish-background.jpg');
+    default:
+      return require('../assets/img/background/pudu-background.png');
+  }
+} 
 
 const styles = StyleSheet.create({
   header: {
@@ -323,7 +351,7 @@ const styles = StyleSheet.create({
     // aspectRatio: 1,
     borderColor: 'black',
     borderRadius: '30%',
-    borderWidth: 1
+    // borderWidth: 1
   },
   buttonImageIcon: {
     // padding: 10,
