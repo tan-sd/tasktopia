@@ -110,7 +110,6 @@ const styles = StyleSheet.create({
         width: '40%',
         marginRight: 10,
         marginBottom: 20
-        
     },
     gothamBold: {
         fontFamily: 'GothamBold'
