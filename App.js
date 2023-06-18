@@ -19,7 +19,15 @@ const Tab = createBottomTabNavigator();
 
 function Home() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={({route}) => ({
+        tabBarActiveTintColor: 'black',
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: '#fedb7d',
+          borderTopWidth: 0,
+        },
+      })}>
       <Tab.Screen name="Home" component={HomePage} options={{ headerShown: false }}/>
       <Tab.Screen name="Rewards" component={RewardsPage} options={{ headerShown: false }} />
       <Tab.Screen name="Profile" component={ProfilePage} options={{ headerShown: false }} />
@@ -48,6 +56,7 @@ export default function App() {
         <Stack.Screen
           name="HomePage"
           component={Home}
+          // options={{ headerShown: false }}
           />
       </Stack.Navigator>
     </NavigationContainer>
