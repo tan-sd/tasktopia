@@ -1,10 +1,20 @@
 import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, TouchableHighlight } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
+import { useFonts } from 'expo-font';
 
 export default function LoginPage({navigation}) {
     const [username, onChangeUsername] = React.useState('');
     const [password, onChangePassword] = React.useState('');
+
+    const [loaded] = useFonts({
+        GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
+        GothamBook: require('../assets/fonts/Gotham-Book.otf')
+      });
+
+      if (!loaded) {
+        return null;
+      }
 
     return (
         <>
@@ -36,7 +46,7 @@ export default function LoginPage({navigation}) {
                 onPress={() => navigation.navigate('AnimalSelection')}/></TouchableHighlight> */}
             <View style={styles.login}>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AnimalSelection')}>
-                <Text style={{textAlign: 'center', marginTop: 10, color:'white'}}>Login</Text>
+                <Text style={{textAlign: 'center', marginTop: 10, color:'white', fontFamily: 'GothamBold'}}>Login</Text>
             </TouchableOpacity></View>
         </SafeAreaView>
         </>
@@ -65,6 +75,7 @@ const styles = StyleSheet.create({
     },
     labels:{
         color: '#EF524A',
+        fontFamily: "GothamBook"
     },
     middleSection:{
         display: 'flex',
