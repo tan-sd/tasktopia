@@ -5,6 +5,7 @@ import { TextureLoader } from 'expo-three';
 import useControls from 'r3f-native-orbitcontrols';
 import { StyleSheet, Text, View, Image, Button, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native';
 // import { useEnvironment } from '@react-three/drei';
 import HomePage from './HomePage';
 
@@ -257,6 +258,7 @@ export default function AnimalSelection({navigation}) {
 
     return (
         <>
+        <SafeAreaView style={{flex: 1}}>
         <View style={styles.container} {...events}>
           <View style={styles.header}>
             <Text>Choose your pets</Text>
@@ -311,6 +313,7 @@ export default function AnimalSelection({navigation}) {
               onPress={() => navigation.navigate('HomePage')} />
             </View>
         </View>
+        </SafeAreaView>
         </>
     )
 }
