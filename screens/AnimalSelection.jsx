@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     width: '80%',
     // aspectRatio: 1,
     borderColor: 'black',
-    borderRadius: '30%',
+    borderRadius: 30
     // borderWidth: 1
   },
   buttonImageIcon: {
