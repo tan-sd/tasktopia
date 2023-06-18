@@ -264,7 +264,7 @@ export default function AnimalSelection({navigation}) {
           </View>
           <Image
             source={getImageSource(selectedBgImg)}
-            style={{ position: 'absolute', width: '80%', height: '50%', borderRadius: 30, top: 150}}
+            style={styles.bgImage}
             resizeMode="cover"
           />
             <Canvas
@@ -302,7 +302,7 @@ export default function AnimalSelection({navigation}) {
                 />
               </TouchableOpacity>
             </View>
-            <View style={{marginTop: 15}}>
+            <View style={{marginBottom: 50}}>
             <Button
               // onPress={onPressLearnMore}
               title="Confirm"
@@ -332,40 +332,47 @@ const getImageSource = (imageName) => {
 
 const styles = StyleSheet.create({
   header: {
-    width: '100%',
+    // width: '100%',
     height: 100,
     textAlign: 'center',
-    marginTop: 50,
-    backgroundColor: '#fff',
+    // marginTop: 50,
+    // backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
   container: {
-    // flex: 1,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 750
+    // height: 750
   },
   canvas: {
     width: '80%',
     // aspectRatio: 1,
     borderColor: 'black',
-    borderRadius: 30
-    // borderWidth: 1
+    borderRadius: 30,
+    borderWidth: 1
   },
   buttonImageIcon: {
     // padding: 10,
     margin: 5,
-    height: 150,
+    height: 160,
     width: 110,
     borderWidth: 1,
     borderColor: 'black',
-    borderRadius: 10
+    borderRadius: 10,
     // width: 'auto',
     // resizeMode: 'stretch',
   },
   imageWrapper: {
     flexDirection: 'row',
     marginTop: 10,
+  },
+  bgImage: {
+    position: 'absolute',
+    width: '80%',
+    height: '56%',
+    borderRadius: 30,
+    top: 100
   }
 });
