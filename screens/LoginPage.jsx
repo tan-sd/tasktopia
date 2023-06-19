@@ -87,19 +87,19 @@ export default function LoginPage({navigation}) {
         <>
         <SafeAreaView style={styles.container}>
             <StatusBar/>
-            <Image source={require('../assets/tasktopia-logo.png')} style={[styles.logo, {height: height*0.3}]} resizeMode="contain"   />
+            <Image source={require('../assets/tasktopia-logo.png')} style={[styles.logo]} resizeMode="contain"   />
 
             <View style={styles.middleSection}>
             <Text style={styles.labels}>Username</Text>
             
-            <Controller control={control} name="username" rules={{required:'Username is required'}} render={({field:    {value, onChange, onBlur}, fieldState:{error}}) => 
+            <Controller control={control} name="username" rules={{required:'Username is required'}} render={({field: {value, onChange, onBlur}, fieldState:{error}}) => 
                 <>
                 <View>
                 <TextInput placeholder={''} style={[styles.textInput, {borderColor: error ? 'red' : 'black'}]}
                
                 onChangeText={onChange} value={value} onBlur={onBlur} /> 
                 
-                {!!error && (<Text style={{color:'red', fontSize:12}}>{error.message || 'Error'}</Text>)} 
+                {!!error && (<Text style={{color:'red', fontSize: 12, paddingTop: 5}}>{error.message || 'Error'}</Text>)} 
                 </View>
                 </>
 
@@ -114,12 +114,11 @@ export default function LoginPage({navigation}) {
                 <View>
                 <TextInput placeholder={''} style={[styles.textInput, {borderColor: error ? 'red' : 'black'}]} secureTextEntry={true} onChangeText={onChange} value={value} onBlur={onBlur} /> 
                 
-                {!!error && (<Text style={{color:'red', fontSize:12}}>{error.message || 'Error'}</Text>)} 
+                {!!error && (<Text style={{color:'red', fontSize: 12, paddingTop: 5}}>{error.message || 'Error'}</Text>)} 
                 </View>
                 </>
 
             } /> 
-            </View> 
                 {/* <TouchableHighlight style={styles.button}>
             <Button 
                 title="Login"
@@ -138,6 +137,7 @@ export default function LoginPage({navigation}) {
             {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AnimalSelection')}>
                 <Text style={{textAlign: 'center', marginTop: 10, color:'white', fontFamily: 'GothamBold'}}>Login</Text>
             </TouchableOpacity></View> */}
+            </View>
         </SafeAreaView>
         </>
     )
@@ -147,48 +147,45 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fedb7d',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     textInput: {
         height: 40,
-        margin: 12,
+        marginTop: '2%',
         borderWidth: 1,
         padding: 10,
-        width:196,
-        borderRadius:5,
+        width: 230,
+        borderRadius: 5,
     },
-    homeHeader: {
-        textAlign: 'center',
+    labels: {
         color: '#EF524A',
+        fontFamily: "GothamBook",
+        marginTop: '5%'
     },
-    homeHeaderSecond: {
-        textAlign: 'center'
-    },
-    labels:{
-        color: '#EF524A',
-        fontFamily: "GothamBook"
-    },
-    middleSection:{
+    middleSection: {
         display: 'flex',
         alignItems: 'center',
-        top: 80,
     },
-    button:{
-        height:40,
-        width:160,
+    button: {
+        height: 40,
+        width: 160,
         backgroundColor: "#16D7E1",
         borderRadius: 20,
-        top:120,
         color: 'white',
         display: 'flex',
         alignItems: 'center',
         textAlign: 'center',
     },
-    login:{
+    login: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: '7%'
     },
-    logo:{
+    logo: {
         alignSelf: 'center',
+        justifyContent: 'center',
+        marginBottom: '5%'
     }
 })
