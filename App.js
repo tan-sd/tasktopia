@@ -51,12 +51,13 @@ export default function App() {
         <Stack.Screen
           name="AnimalSelection"
           component={AnimalSelection}
+          options={{ headerShown: false }}
           />
 
         <Stack.Screen
           name="HomePage"
           component={Home}
-          // options={{ headerShown: false }}
+          options={{ headerShown: false }}
           />
       </Stack.Navigator>
     </NavigationContainer>
