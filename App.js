@@ -9,6 +9,7 @@ import RewardsPage from './screens/RewardsPage';
 import ProfilePage from './screens/ProfilePage';
 import FriendsPage from './screens/FriendsPage';
 import { LogBox } from 'react-native';
+import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 
 LogBox.ignoreLogs(
   ['Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives: https://threejs.org/docs/index.html#manual/en/introduction/Installation']
@@ -28,10 +29,37 @@ function Home() {
           borderTopWidth: 0,
         },
       })}>
-      <Tab.Screen name="Home" component={HomePage} options={{ headerShown: false }}/>
-      <Tab.Screen name="Rewards" component={RewardsPage} options={{ headerShown: false }} />
-      <Tab.Screen name="Profile" component={ProfilePage} options={{ headerShown: false }} />
-      <Tab.Screen name="Friends" component={FriendsPage} options={{ headerShown: false }} />
+      <Tab.Screen name="Home" component={HomePage} options={{
+        tabBarLabel: 'Home',
+        headerShown: false,
+        tabBarIcon: ({focused, size}) => (
+          <MaterialIcons name="pets" size={24} color={focused ? "black" : "grey"} />
+        )
+        }}/> 
+      <Tab.Screen name="Rewards" component={RewardsPage} options={{
+        tabBarLabel: 'Rewards',
+        headerShown: false,
+        tabBarIcon: ({focused, size}) => (
+          <FontAwesome5 name="award" size={24} color={focused ? "black" : "grey"} />
+        )
+      }}
+        />
+      <Tab.Screen name="Profile" component={ProfilePage} options={{
+        tabBarLabel: 'Profile',
+        headerShown: false,
+        tabBarIcon: ({focused, size}) => (
+          <AntDesign name="profile" size={24} color={focused ? "black" : "grey"} />
+        )
+        }}
+        />
+      <Tab.Screen name="Friends" component={FriendsPage} options={{
+        tabBarLabel: 'Friends',
+        headerShown: false,
+        tabBarIcon: ({focused, size}) => (
+          <FontAwesome5 name="user-friends" size={24} color={focused ? "black" : "grey"} />
+        )
+        }}
+        />
     </Tab.Navigator>
   )
 }
