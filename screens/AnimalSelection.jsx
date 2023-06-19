@@ -251,11 +251,26 @@ export default function AnimalSelection({navigation}) {
 
     const [selectedModel, setSelectedModel] = useState('pudu');
     const [selectedBgImg, setSelectedBgImg] = useState('pudu');
+    const [selectedPet, setSelectedPet] = useState({
+      button1: true,
+      button2: false,
+      button3: false,
+    });
     const [OrbitControls, events] = useControls();
 
     const handleImageChange = (imageName) => {
       setSelectedBgImg(imageName)
-    }
+    };
+
+    const handleClickPet = (button) => {
+      setSelectedPet((prevState) => ({
+        button1: button === 'button1',
+        button2: button === 'button2',
+        button3: button === 'button3'
+      }));
+    };
+
+    const buttonStyle = selectedPet ? styles.activeButton : styles.inactiveButton;
 
     const [loaded] = useFonts({
       GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
@@ -296,24 +311,24 @@ export default function AnimalSelection({navigation}) {
             </View>
             <View style={styles.imageWrapper}>
               <TouchableOpacity activeOpacity={0.5} onPress={() => 
-                [setSelectedModel('pudu'), handleImageChange('image1')]}>
+                [setSelectedModel('pudu'), handleImageChange('image1'), handleClickPet('button1')]}>
                 <Image
                 source={require('../assets/animals/img/Pudu.png')}
-                style={styles.buttonImageIcon}
+                style={selectedPet.button1 ? styles.activeButton : styles.inactiveButton}
                 />
               </TouchableOpacity>
               <TouchableOpacity activeOpacity={0.5} onPress={() =>
-                [setSelectedModel('sparrow'), handleImageChange('image2')]}>
+                [setSelectedModel('sparrow'), handleImageChange('image2'), handleClickPet('button2')]}>
                 <Image
                 source={require('../assets/animals/img/Sparrow.png')}
-                style={styles.buttonImageIcon}
+                style={selectedPet.button2 ? styles.activeButton : styles.inactiveButton}
                 />
               </TouchableOpacity>
               <TouchableOpacity activeOpacity={0.5} onPress={() =>
-                [setSelectedModel('inkfish'), handleImageChange('image3')]}>
+                [setSelectedModel('inkfish'), handleImageChange('image3'), handleClickPet('button3')]}>
                 <Image
                 source={require('../assets/animals/img/InkFish.png')}
-                style={styles.buttonImageIcon}
+                style={selectedPet.button3 ? styles.activeButton : styles.inactiveButton}
                 />
               </TouchableOpacity>
             </View>
@@ -374,7 +389,18 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     // borderWidth: 1, 
   },
-  buttonImageIcon: {
+  activeButton: {
+    // padding: 10,
+    margin: 5,
+    height: 160,
+    width: 110,
+    borderWidth: 3,
+    borderColor: '#16d7e1',
+    borderRadius: 10,
+    // width: 'auto',
+    // resizeMode: 'stretch',
+  },
+  inactiveButton: {
     // padding: 10,
     margin: 5,
     height: 160,
