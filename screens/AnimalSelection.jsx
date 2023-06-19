@@ -269,8 +269,8 @@ export default function AnimalSelection({navigation}) {
     return (
         <>
         <SafeAreaView style={{flex: 1, backgroundColor: '#fedb7d'}}>
-        <View style={styles.container} {...events}>
-          <View style={styles.header}>
+        <View style={styles.container}>
+          <View style={{...styles.header}}>
             <Text style={{...styles.gothamBold, fontSize: 25}}>Choose your pet!</Text>
             <StatusBar style="auto" />
           </View>
@@ -279,9 +279,11 @@ export default function AnimalSelection({navigation}) {
             style={styles.bgImage}
             resizeMode="cover"
           />
+          <View style={styles.canvasWrapper} {...events}>
             <Canvas
                 onCreated={onCreated}
-                style={styles.canvas}>
+                style={styles.canvas}
+                >
                 <ambientLight/>
                     <OrbitControls/>
                     <Suspense fallback={null}>
@@ -291,6 +293,7 @@ export default function AnimalSelection({navigation}) {
                         {selectedModel === 'inkfish' && <InkFishModel />}
                     </Suspense>
             </Canvas>
+            </View>
             <View style={styles.imageWrapper}>
               <TouchableOpacity activeOpacity={0.5} onPress={() => 
                 [setSelectedModel('pudu'), handleImageChange('image1')]}>
@@ -359,12 +362,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#fedb7d',
     // height: 750
   },
+  canvasWrapper: {
+    width: 350,
+    height: 475,
+    bottom: 10,
+  },
   canvas: {
-    width: '80%',
+    height: '56%',
     // aspectRatio: 1,
     borderColor: 'black',
     borderRadius: 30,
-    // borderWidth: 1
+    // borderWidth: 1, 
   },
   buttonImageIcon: {
     // padding: 10,
