@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { useFonts } from 'expo-font';
@@ -16,6 +16,7 @@ export default function FriendsPage({navigation}) {
     return (
         <>
         <SafeAreaView style={styles.container}>
+            <ScrollView>
             <StatusBar/>
             <View style={styles.friendsWrapper}>
                 <View>
@@ -94,7 +95,7 @@ export default function FriendsPage({navigation}) {
                     </View>
                 </View>
             </View>
-
+            </ScrollView>
         </SafeAreaView>
         </>
     )
