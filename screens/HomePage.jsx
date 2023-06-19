@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber/native';
@@ -45,6 +45,7 @@ function PuduModel(props) {
         gltf.scene.traverse((child) => {
           if (child instanceof THREE.Mesh) {
             child.material.map = base;
+            base.format = THREE.RGBAFormat
             // child.material.normalMap = normal;
             // child.material.roughnessMap = rough;
           }
@@ -76,7 +77,7 @@ function PuduModel(props) {
   
     return (
         <mesh rotation={[0.1, -0.4, 0]} position={[0, -1.5, 0]}>
-            <primitive object={gltf.scene} scale={3} onClick={handleClick}/>
+            <primitive object={gltf.scene} scale={3} onClick={handleClick} dispose={null}/>
         </mesh>
     );
   }  
@@ -104,14 +105,14 @@ export default function HomePage({navigation}) {
         <>
         <SafeAreaView style={styles.container}>
             <StatusBar/>
-            <View style={styles.container} {...events}>
+            <View style={styles.container}>
                 <StatusBar style="auto" />
                 <Image
                     source={require('../assets/img/background/pudu-background.png')}
                     style={styles.bgImage}
                     resizeMode="cover"
                 />
-                <View style={styles.canvasWrapper}>
+                <View style={styles.canvasWrapper} {...events}>
                     <Canvas
                         onCreated={onCreated}
                         style={styles.canvas}>
@@ -121,6 +122,12 @@ export default function HomePage({navigation}) {
                                 <PuduModel />
                             </Suspense>
                     </Canvas>
+                </View>
+                <View>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('Login')}>
+                    <Text>Log out</Text>
+                  </TouchableOpacity>
                 </View>
             </View>
         </SafeAreaView>
