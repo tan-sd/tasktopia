@@ -5,10 +5,19 @@ import * as React from 'react';
 // import CustomButton from "../components/customButton";
 import{useForm, Controller} from "react-hook-form";
 import { useFonts } from 'expo-font';
+import { createUser, signInUser } from '../firebase/firebase';
 
 export default function LoginPage({navigation}) {
-    const [username, setUsername] = React.useState('');
+    const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
+
+    const handleEmailChange = (text) => {
+        setEmail(text);
+      };
+    
+      const handlePasswordChange = (text) => {
+        setPassword(text);
+      };
 
     const {control, handleSubmit, formState:{errors}} = useForm();
     console.log(errors);
@@ -17,6 +26,39 @@ export default function LoginPage({navigation}) {
         console.log(data);
         console.warn('Login');
         navigation.navigate('AnimalSelection')
+    }
+
+    const handleSignUp = (email, password) => {
+        // const email = "example@example.com"; // Replace with the desired email
+        // const password = "password123"; // Replace with the desired password
+      
+        alert('Sign Up');
+      
+        createUser(email, password)
+          .then((userCredential) => {
+            console.log(userCredential);
+            const user = userCredential.user;
+            console.log(user.email);
+          })
+          .catch(error => {
+            alert(error.message);
+          });
+      };
+
+    const handleSignIn = (email, password) => {
+        
+        alert('Sign In');
+
+        signInUser(email, password)
+        .then((userCredential) => {
+            console.log(userCredential);
+            const user = userCredential.user;
+            console.log(user.email);
+            navigation.navigate('AnimalSelection')
+        })
+        .catch(error => {
+            alert(error.message);
+        })
     }
     // const [preLogTest, setPreLogTest] = React.useState(false);
 
@@ -90,14 +132,14 @@ export default function LoginPage({navigation}) {
             <Image source={require('../assets/tasktopia-logo.png')} style={[styles.logo]} resizeMode="contain"   />
 
             <View style={styles.middleSection}>
-            <Text style={styles.labels}>Username</Text>
+            <Text style={styles.labels}>Email</Text>
             
-            <Controller control={control} name="username" rules={{required:'Username is required'}} render={({field: {value, onChange, onBlur}, fieldState:{error}}) => 
+            <Controller control={control} name="email" rules={{required:'Email is required'}} render={({field: {value, onChange, onBlur}, fieldState:{error}}) => 
                 <>
                 <View>
                 <TextInput placeholder={''} style={[styles.textInput, {borderColor: error ? 'red' : 'black'}]}
                
-                onChangeText={onChange} value={value} onBlur={onBlur} /> 
+                onChangeText={handleEmailChange} value={value} onBlur={onBlur} /> 
                 
                 {!!error && (<Text style={{color:'red', fontSize: 12, paddingTop: 5}}>{error.message || 'Error'}</Text>)} 
                 </View>
@@ -112,7 +154,7 @@ export default function LoginPage({navigation}) {
                     }}} render={({field:{value, onChange, onBlur}, fieldState:{error}}) => 
                 <>
                 <View>
-                <TextInput placeholder={''} style={[styles.textInput, {borderColor: error ? 'red' : 'black'}]} secureTextEntry={true} onChangeText={onChange} value={value} onBlur={onBlur} /> 
+                <TextInput placeholder={''} style={[styles.textInput, {borderColor: error ? 'red' : 'black'}]} secureTextEntry={true} onChangeText={handlePasswordChange} value={value} onBlur={onBlur} /> 
                 
                 {!!error && (<Text style={{color:'red', fontSize: 12, paddingTop: 5}}>{error.message || 'Error'}</Text>)} 
                 </View>
@@ -127,7 +169,7 @@ export default function LoginPage({navigation}) {
             
             
             <View style={styles.login}>
-            <TouchableOpacity style={styles.button} onPress={handleSubmit(onLogin)}>
+            <TouchableOpacity style={styles.button} onPress={() => handleSignIn(email, password)}>
                 <Text style={{textAlign: 'center', marginTop: 10, color:'white',fontFamily: 'GothamBold'}}>Login</Text>
 
             </TouchableOpacity>
