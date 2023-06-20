@@ -10,8 +10,12 @@ import PuduModel from '../components/PuduModel';
 import SparrowModel from '../components/SparrowModel';
 import InkFishModel from '../components/InkFishModel';
 import { signOutUser } from '../firebase/firebase';
+import { auth } from '../firebase/firebase';
+import { ref, getDatabase, onValue, off } from 'firebase/database';
 
 export default function HomePage({navigation}) {
+    const [dbPet, setDbPet] = useState('');
+
     const handleSignOut= () => {
         signOutUser()
         .then(() => {
@@ -39,17 +43,51 @@ export default function HomePage({navigation}) {
 
     const [OrbitControls, events] = useControls();
 
+    React.useEffect(() => {
+        const fetchDbPet = async () => {
+          const user = auth.currentUser;
+          const dbRef = ref(getDatabase(), `users/${user.uid}/selectedPet`);
+      
+          const petRef = onValue(dbRef, (snapshot) => {
+            const selectedPet = snapshot.val();
+            setDbPet(selectedPet);
+          });
+      
+          return () => {
+            off(petRef);
+          };
+        };
+      
+        fetchDbPet();
+      }, []);
+
     return (
         <>
         <SafeAreaView style={styles.container}>
             <StatusBar/>
             <View style={styles.container}>
                 <StatusBar style="auto" />
-                <Image
-                    source={require('../assets/img/background/pudu-background.png')}
-                    style={styles.bgImage}
-                    resizeMode="cover"
-                />
+                {dbPet === 'pudu' && (
+                    <Image
+                        source={require('../assets/img/background/pudu-background.png')}
+                        style={styles.bgImage}
+                        resizeMode="cover"
+                    />
+                )}
+                {dbPet === 'sparrow' && (
+                    <Image
+                        source={require('../assets/img/background/sparrow-background.png')}
+                        style={styles.bgImage}
+                        resizeMode="cover"
+                    />
+                )}
+                {dbPet === 'inkfish' && (
+                    <Image
+                        source={require('../assets/img/background/inkfish-background.jpg')}
+                        style={styles.bgImage}
+                        resizeMode="cover"
+                    />
+                )}
                 <View style={styles.canvasWrapper} {...events}>
                     <Canvas
                         onCreated={onCreated}
@@ -57,13 +95,15 @@ export default function HomePage({navigation}) {
                         <ambientLight/>
                             <OrbitControls/>
                             <Suspense fallback={null}>
-                                <PuduModel />
+                                {/* <PuduModel /> */}
+                                {dbPet === 'pudu' && <PuduModel />}
+                                {dbPet === 'sparrow' && <SparrowModel />}
+                                {dbPet === 'inkfish' && <InkFishModel />}
                             </Suspense>
                     </Canvas>
                 </View>
                 <View>
                   <TouchableOpacity
-                    // onPress={() => navigation.navigate('Login')}
                     onPress={handleSignOut}
                     >
                     <Text>Log out</Text>
