@@ -9,8 +9,18 @@ import useControls from 'r3f-native-orbitcontrols';
 import PuduModel from '../components/PuduModel';
 import SparrowModel from '../components/SparrowModel';
 import InkFishModel from '../components/InkFishModel';
+import { signOutUser } from '../firebase/firebase';
 
 export default function HomePage({navigation}) {
+    const handleSignOut= () => {
+        signOutUser()
+        .then(() => {
+            navigation.replace('Login');
+        }).catch((error) => {
+            alert(error.message);
+        })
+    }
+
     const glRef = useRef();
 
     const onCreated = (state) => {
@@ -53,7 +63,9 @@ export default function HomePage({navigation}) {
                 </View>
                 <View>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate('Login')}>
+                    // onPress={() => navigation.navigate('Login')}
+                    onPress={handleSignOut}
+                    >
                     <Text>Log out</Text>
                   </TouchableOpacity>
                 </View>
