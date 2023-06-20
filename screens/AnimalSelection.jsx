@@ -81,7 +81,7 @@ export default function AnimalSelection({navigation}) {
         <SafeAreaView style={{flex: 1, backgroundColor: '#fedb7d'}}>
         <View style={styles.container}>
           <View style={{...styles.header}}>
-            <Text style={{...styles.gothamBold, fontSize: 25}}>Choose your pet!</Text>
+            <Text style={{...styles.gothamBold, fontSize: 25}}>Choose your pet! ADAMBFT</Text>
             <StatusBar style="auto" />
           </View>
           <Image
