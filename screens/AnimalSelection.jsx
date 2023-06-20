@@ -12,6 +12,8 @@ import { useFonts } from 'expo-font';
 import PuduModel from '../components/PuduModel';
 import SparrowModel from '../components/SparrowModel';
 import InkFishModel from '../components/InkFishModel';
+import { auth } from '../firebase/firebase';
+import { ref, getDatabase, get, child, update } from 'firebase/database';
 
 export default function AnimalSelection({navigation}) {
     const glRef = useRef();
@@ -50,6 +52,18 @@ export default function AnimalSelection({navigation}) {
         button3: button === 'button3'
       }));
     };
+
+    const handleDBPet = (pet) => {
+      const user = auth.currentUser;
+      const db = getDatabase();
+      const dbRef = ref(db);
+
+      get(child(dbRef, `users/${user.uid}`)).then((snapshot) => {
+        update(ref(db, 'users/' + user.uid), {
+          selectedPet: pet,
+        })
+      })
+    }
 
     const buttonStyle = selectedPet ? styles.activeButton : styles.inactiveButton;
 
@@ -115,7 +129,8 @@ export default function AnimalSelection({navigation}) {
             </View>
             <View style={{paddingBottom: 10}}>
               <TouchableOpacity
-              onPress={() => navigation.navigate('HomePage')} style={styles.confirmButton}
+              onPress={() => {
+                handleDBPet(selectedModel); navigation.navigate('HomePage'); }} style={styles.confirmButton}
               >
                 <Text style={{...styles.gothamBook, textAlign: 'center'}}>Confirm</Text>
               </TouchableOpacity>
