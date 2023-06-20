@@ -5,7 +5,8 @@ import * as React from 'react';
 // import CustomButton from "../components/customButton";
 import{useForm, Controller} from "react-hook-form";
 import { useFonts } from 'expo-font';
-import { createUser, signInUser } from '../firebase/firebase';
+import { auth, createUser, signInUser } from '../firebase/firebase';
+import { ref, set, getDatabase, get, child } from 'firebase/database';
 
 export default function LoginPage({navigation}) {
     const [email, setEmail] = React.useState('');
@@ -23,8 +24,8 @@ export default function LoginPage({navigation}) {
     console.log(errors);
     const {height} = useWindowDimensions();
     const onLogin = (data) => {
-        console.log(data);
-        console.warn('Login');
+        // console.log(data);
+        // console.warn('Login');
         navigation.navigate('AnimalSelection')
     }
 
@@ -36,9 +37,9 @@ export default function LoginPage({navigation}) {
       
         createUser(email, password)
           .then((userCredential) => {
-            console.log(userCredential);
+            // console.log(userCredential);
             const user = userCredential.user;
-            console.log(user.email);
+            // console.log(user.email);
           })
           .catch(error => {
             alert(error.message);
@@ -47,14 +48,41 @@ export default function LoginPage({navigation}) {
 
     const handleSignIn = (email, password) => {
         
-        alert('Sign In');
+        // alert('Sign In');
 
         signInUser(email, password)
         .then((userCredential) => {
-            console.log(userCredential);
-            const user = userCredential.user;
-            console.log(user.email);
-            navigation.navigate('AnimalSelection')
+            // console.log(userCredential);
+            // const user = userCredential.user;
+            // console.log(user.email);
+            const user = auth.currentUser;
+            // console.log(user);
+            const db = getDatabase();
+            // set(ref(db, 'users/' + user.uid), {
+            //     email: email,
+            //   });
+
+            const dbRef = ref(db);
+
+            get(child(dbRef, `users/${user.uid}`)).then((snapshot) => {
+                if(snapshot.exists()) {
+                    // console.log('Exists');
+                    if(snapshot.child('selectedPet').val() === "") {
+                        navigation.navigate('AnimalSelection');
+                    } else {
+                        navigation.navigate('HomePage');
+                    }
+                } else {
+                    // console.log('Not exist');
+                    set(ref(db, 'users/' + user.uid), {
+                        selectedPet: '',
+                      });
+
+                    navigation.navigate('AnimalSelection');
+                }
+            }).catch((error) => {
+                console.error(error)
+            })
         })
         .catch(error => {
             alert(error.message);
