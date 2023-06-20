@@ -2,8 +2,35 @@ import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, Saf
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { useFonts } from 'expo-font';
-
+import { auth } from "../firebase/firebase";
+// import { getFriends } from "../firebase/firebase";
+import {ref, onValue} from 'firebase/database';
+import { database } from "../firebase/firebase";
 export default function FriendsPage({navigation}) {
+    const [friends, setFriends] = React.useState(null);
+
+    // React.useEffect(() => {
+    //     async function friendsObj() {
+    //         const allFriends = await getFriends();
+    //         console.log(allFriends);
+    //         setFriends(allFriends);
+    //     }
+    //     friendsObj();
+    // }, []);
+    // const [friends, setFriends] = useState([]);
+
+  const getFriends = () => {
+    const friendsRef = ref(database, 'users/');
+    onValue(friendsRef, (snapshot) => {
+      const data = snapshot.val();
+      setFriends(data); // Update the state here
+    });
+  };
+
+  React.useEffect(() => {
+    getFriends();
+  }, []);
+        
     const [loaded] = useFonts({
         GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
         GothamBook: require('../assets/fonts/Gotham-Book.otf')
@@ -12,6 +39,8 @@ export default function FriendsPage({navigation}) {
       if (!loaded) {
         return null;
       }
+
+
 
     return (
         <>
@@ -26,20 +55,33 @@ export default function FriendsPage({navigation}) {
                 </View>
 
                 <View>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 30, marginTop: 50, marginLeft: -40}}>
-                    <View>
-                        {/*TODO: Convert o component with props*/}
-                        <Image
-                            source={require('../assets/favicon.png')}
-                            style={styles.friendsImg}
-                        />
-                    </View>
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 30, marginTop: 50, marginLeft: -40}}>
+               
                         <View style={styles.friendDetailsWrapper}>
-                            <Text style={[styles.friendName, styles.gothamBold]}>Friend Name 1</Text>
-                            <Text style={[styles.friendJobRole, styles.gothamBook]}>Friend Job 1</Text>
-                            <TouchableOpacity style={styles.visitButton}>
-                                <Text style={{...styles.gothamBook, textAlign: 'center'}}>Visit</Text>
-                            </TouchableOpacity>
+                            { friends ? (Object.keys(friends).map((uid) =>{
+                                const friend = friends[uid]
+                                return( 
+                                <>
+                                <View>
+                                <Image
+                                source={require('../assets/favicon.png')}
+                                style={styles.friendsImg}
+                                />
+                                </View>
+
+                                <View style={{flexDirection:'right'}}>
+                                <Text style={[styles.friendName, styles.gothamBold]}>{friend.firstName} {friend.lastName}</Text>
+                                 <Text style={[styles.friendJobRole, styles.gothamBook]}>{friend.jobRole}</Text>
+                                 <TouchableOpacity style={styles.visitButton}>
+                                     <Text style={{...styles.gothamBook, textAlign: 'center'}}>Visit</Text>
+                                 </TouchableOpacity>
+                                </View>
+                                </>
+                                )
+                            } )) : (
+                                <Text>Loading...</Text>
+                            )
+                        }
                         </View>
                     </View>
 
