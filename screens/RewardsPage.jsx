@@ -11,8 +11,14 @@ export default function RewardsPage({navigation}) {
     const [dbPet, setDbPet] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [buttonColor, setButtonColor] = useState('')
-    
+    const [buttonClicked, setButtonClicked] = useState(false)
 
+    const handleClick = () => {
+        setButtonColor('grey')
+
+        setButtonClicked(true)
+        console.log('handle click')
+    }
     React.useEffect(() => {
         const fetchDbPet = async () => {
           const user = auth.currentUser;
@@ -109,14 +115,21 @@ export default function RewardsPage({navigation}) {
                                 <Pressable
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => setModalVisible(!modalVisible)}>
-                                <Text style={styles.textStyle}>Close</Text>
+                                <Text style={styles.textStyle}>Close {buttonClicked}</Text>
                                 </Pressable>
                             </View>
                             </View>
                         </Modal>
             
-                        <TouchableOpacity style={styles.claimButton}>
-                                <Text style={{...styles.gothamBold, fontSize: 10}} onPress={() => setModalVisible(true)}>
+                        <TouchableOpacity style={[styles.claimButton, { backgroundColor: buttonClicked ? buttonColor : '#10a958' }]}
+                            onPress={() => {
+                                handleClick();
+                                setModalVisible(true)
+                            }}
+                            
+                            disabled={buttonClicked}>
+                            
+                                <Text style={{...styles.gothamBold, fontSize: 10}} >
                                     Claim
                                 </Text>
                         </TouchableOpacity>
