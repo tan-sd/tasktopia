@@ -9,8 +9,8 @@ import RewardsPage from './screens/RewardsPage';
 import ProfilePage from './screens/ProfilePage';
 import FriendsPage from './screens/FriendsPage';
 import AdminPage from "./screens/AdminPage";
-import { LogBox } from 'react-native';
 import FriendHomePage from './components/FriendHomePage';
+import UserTasks from './screens/UserTasks';
 import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { AuthContext, AuthContextProvider } from "./AuthContext";
 import React from 'react';
@@ -19,7 +19,6 @@ import { ref, getDatabase, onValue, off } from 'firebase/database';
 
 LogBox.ignoreAllLogs();
 
-LogBox.ignoreAllLogs();
 
 LogBox.ignoreLogs(
   ['Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives: https://threejs.org/docs/index.html#manual/en/introduction/Installation']
@@ -39,7 +38,7 @@ function Home() {
 
       const adminRef = onValue(dbRef, (snapshot) => {
         const adminValue = snapshot.val();
-        console.log(adminValue)
+        // console.log(adminValue)
         isAdmin(adminValue);
       })
       return () => {
@@ -131,6 +130,13 @@ export default function App() {
           <Stack.Screen
             name="FriendHomePage"
             component={FriendHomePage}
+            options={{ headerShown: false }}
+          />
+
+          {/*after clicking manage users on admin  */}
+          <Stack.Screen
+            name="UserTasks"
+            component={UserTasks}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

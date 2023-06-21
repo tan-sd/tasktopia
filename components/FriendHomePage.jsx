@@ -119,6 +119,7 @@ const FriendHomePage = ({ route }) => {
                 <StatusBar style="auto" />
 
                 <View style={styles.progressContainer}>
+                  
             {/* Level Progress Bar */}
               <View style={[styles.progressBar, styles.leftProgressBar]}>
                 <View style={styles.iconContainer}>
