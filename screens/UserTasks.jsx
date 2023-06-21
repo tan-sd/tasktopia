@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, Saf
 import { Suspense, useRef, useLayoutEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts } from 'expo-font';
 import { auth } from '../firebase/firebase';
 import { ref, getDatabase, onValue, off } from 'firebase/database';
 // import ProgressBar from 'react-native-progress/Bar';
@@ -68,70 +69,71 @@ const UserTasks = ({route}) =>{
         setAccordionOpen(!accordionOpen);
       };
 
+      const [loaded] = useFonts({
+        GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
+        GothamBook: require('../assets/fonts/Gotham-Book.otf')
+      });
+
+      if (!loaded) {
+        return null;
+      }
+
       return (
         <>
         <SafeAreaView style={styles.container}>
             <StatusBar/>
-
-            <View style={styles.profileWrapper}>
-                <StatusBar style="auto" />
-           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Image
-                        source={{uri: userDetails.profileImg}}
-                        style={styles.profileImg}
-                        resizeMode="cover"
-                    />
-                    <View style={styles.profileDetails}>
-                        <Text style={[styles.friendName, styles.gothamBold]}>{userDetails.firstName} {userDetails.lastName}</Text>
-                         <Text style={[styles.friendJobRole, styles.gothamBook]}>{userDetails.jobRole}</Text>
-
-                        <View style={{flexDirection: 'row', marginTop: 25}}>
-                        </View>
-                    </View>
-                </View>
-
-           <View>
-                <Image
+            <View style={styles.container}>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 30, marginTop: 70, marginLeft: -40}}>
+                <View>
+                  <Image
                     source={{uri: userDetails.profileImg}}
                     style={styles.friendsImg}
-                />
+                    />
+                </View>
+
+                <View style={styles.friendDetailseWrapper}>
+                  <Text style={[styles.friendName, styles.gothamBold]}>{userDetails.firstName} {userDetails.lastName}</Text>
+                  <Text style={[styles.friendJobRole, styles.gothamBook]}>{userDetails.jobRole}</Text>
+                </View>
+                    
+              </View>
             </View>
-        </View>
+
+            {/* <View>
+              <Image
+                source={{uri: userDetails.profileImg}}
+                style={styles.friendsImg}
+              />
+            </View> */}
 
         <View style={{top: 200,position: "absolute",left: 5,marginLeft: 40,marginTop: 30,}}>
-
-        <Text style={styles.accordionLabel}>Allocate New Tasks</Text>
-        <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:25}} >
-            <View style={{ width:400, height: 700, marginRight: 50 }}>
-            <TextInput
-            style={{ borderWidth: 1, padding: 10, height: 300, borderRadius: 10}}
-            value={giveTask}
-            multiline
-            numberOfLines={8}
-            onChangeText={setNewTask}
-            placeholder="Enter new task here"
-            />
-
+          <Text style={[styles.accordionLabel, styles.gothamBold]}>Allocate New Tasks</Text>
+          
+          <View style={{justifyContent:'space-between', marginTop:25}} >
+            <View>
+              <TextInput
+                style={{ borderWidth: 1, padding: 10, height: 100, borderRadius: 10, width: 300}}
+                value={giveTask}
+                multiline
+                numberOfLines={8}
+                onChangeText={setNewTask}
+                placeholder="Enter new task here"
+              />
             </View>
             <View>
-
-            <Button title="Allocate Task" onPress={handleSubmit} buttonStyle={{ textAlign: 'center', alignItems:'center' }} />
+              <Button title="Allocate Task" onPress={handleSubmit} buttonStyle={{ textAlign: 'center', alignItems:'center' }} />
             </View>
-        </View>
-
+          </View>
         </View>
 
         {/* approved tasks */}
 
-        <View style={{top: 600,position: "absolute",left: 5,marginLeft: 40,marginTop: 30,}}>
-
-        <Text style={styles.accordionLabel}>Waiting to be approved tasks</Text>
-        <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:25}} >
+        <View style={{top: 420,position: "absolute",left: 5,marginLeft: 40,marginTop: 30,}}>
+          <Text style={[styles.accordionLabel, styles.gothamBold]}>To Be Approved Tasks</Text>
+          <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:25}} >
             <View style={{ width:200, height: 700, marginRight: 50 }}>
-
-            <View>
-                   
-            <ScrollView>
+              <View>
+                <ScrollView>
                 {appTasks.map((task) => (
                   <TouchableOpacity
                     key={task.id}
@@ -199,14 +201,12 @@ const UserTasks = ({route}) =>{
                         </View>
                       </View>
                     </TouchableOpacity>
-
                   ))}
                 </ScrollView>
                 </View>
                 )}
         </View>
-        
-
+  
         <View>
     
     </View>
@@ -218,119 +218,129 @@ const UserTasks = ({route}) =>{
         </TouchableOpacity>
         </SafeAreaView>
         </>
-    )
-  
+    ) 
 }
 
 export default UserTasks;
 
 const styles = StyleSheet.create({
-    profileWrapper: {
-        marginLeft: 40,
-        marginTop: 15,
-        alignContent: 'center',
-    },
-    // friendDetailsWrapper: {
-    // },
-    friendName: {
-        fontSize: 24,
-        marginLeft: 20,
-    },
-    friendJobRole: {
-        marginTop: 5,
-        marginLeft: 20,
-        fontSize: 14
-    },
-    profileImg: {
-        borderColor: 'black',
-        borderWidth: 1,
-        borderRadius: 50,
-        width: 100,
-        height: 100,
-        marginTop: 30
-    },
-    goBackBtn: {
-        top: 0,
-        position: "absolute",
-        left: 0,
-        marginLeft: 40,
-        marginTop: 30,
-    },
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        // justifyContent: 'center',
-        backgroundColor: '#fedb7d',
-        width: '100%'
-    },
-    accordionContainer: {
-        top: '75%',
-        // marginTop: 10,
-        // marginBottom: 10,
-        // borderWidth: 1,
-        width:Dimensions.get('window').width * 0.9,
-        position: 'absolute',
-        zIndex: 1,
-        maxHeight: 200,
-      },
-      accordionButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 10,
-        borderWidth: 1,
-      },
-      accordionLabel: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginLeft: 10,
-      },
-
-      taskContainer: {
-        marginTop: 10,
-        padding: 10,
-        backgroundColor: '#FFF5DB',
-        overflow: 'hidden',
-      },
-      taskText: {
-        fontSize: 16,
-        marginBottom: 5,
-        marginLeft: 5, 
-        fontWeight: 'bold',
-      },
-      eventText:{
-        fontSize: 16,
-        marginBottom: 5,
-        marginLeft: 5, 
-        fontWeight: 'bold',
-      },
-      taskItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 5,
-        borderWidth: 1, 
-        borderColor: 'black', 
-        borderRadius: 5, 
-        backgroundColor: '#FFF5DB', 
-        padding: 5, 
-        marginTop: 2,
-      },
-      eventItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 5,
-        borderWidth: 1, 
-        borderColor: 'black', 
-        borderRadius: 5, 
-        backgroundColor: '#FFF5DB', 
-        padding: 5, 
-        marginTop: 2,
-      },
-      taskContent: {
-        flex: 1,
-        marginLeft: 10,
-      },
-      taskBadges: {
-        flexDirection: 'row',
-        marginTop: 5,
-      },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    // justifyContent: 'center',
+    backgroundColor: '#fedb7d',
+    width: '100%'
+  },
+  friendsImg: {
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 50,
+    width: 90,
+    height: 90,
+  },
+  goBackBtn: {
+    top: 0,
+    position: "absolute",
+    left: 0,
+    marginLeft: 40,
+    marginTop: 70,
+  },
+  friendDetailsWrapper: {
+    alignContent: 'center',
+  },
+  friendName: {
+    fontSize: 20
+  },
+  friendJobRole: {
+    marginTop: 5,
+    fontSize: 14
+  },
+  gothamBold: {
+    fontFamily: 'GothamBold'
+  },
+  gothamBook: {
+      fontFamily: 'GothamBook'
+  },
+  taskContentContainer: {
+    paddingBottom: 150, // Add some padding to the bottom to ensure scrolling space
+    height: 200,
+  },
+  taskItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+    borderWidth: 1, 
+    borderColor: 'black', 
+    borderRadius: 5, 
+    backgroundColor: '#FFF5DB', 
+    padding: 5, 
+    marginTop: 2,
+  },
+  taskText: {
+    fontSize: 16,
+    marginBottom: 5,
+    marginLeft: 5, 
+    fontWeight: 'bold',
+  },
+  taskContent: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  taskBadges: {
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  badgeProject: {
+    marginLeft: 7,
+    backgroundColor: '#699BF7',
+    color: 'white',
+    fontSize: 12,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginRight: 5,
+    borderRadius: 8,
+  },
+  badgeCategory:{
+    backgroundColor: '#699BF7',
+    color: 'white',
+    fontSize: 12,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginRight: 5,
+    borderRadius: 8,
+  },
+  badgeDate: {
+    backgroundColor: '#FF8577',
+    color: 'white',
+    fontSize: 12,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginRight: 5,
+    borderRadius: 8,
+  },
+  taskContentContainer: {
+    paddingBottom: 150, // Add some padding to the bottom to ensure scrolling space
+    height: 200,
+  },
+  accordionContainer: {
+    top: 700,
+    // marginTop: 10,
+    // marginBottom: 10,
+    // borderWidth: 1,
+    width:Dimensions.get('window').width * 0.8,
+    position: 'absolute',
+    zIndex: 1,
+    maxHeight: 200,
+  },
+  accordionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderWidth: 1,
+  },
+  eventAccordionLabel: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
 })
