@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, StatusBar, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, StatusBar, TouchableOpacity, Image, Animated, Easing } from 'react-native';
 import { Suspense, useRef, useLayoutEffect, useState } from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber/native';
 import { useNavigation } from '@react-navigation/native';
@@ -10,12 +10,53 @@ import useControls from 'r3f-native-orbitcontrols';
 import ProgressBar from 'react-native-progress/Bar'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
+const useHeartsAnimation = () => {
+    const [hearts, setHearts] = useState([]);
+  
+    const addHeart = () => {
+      const newHeart = {
+        id: Date.now(),
+        position: new Animated.Value(0),
+        opacity: new Animated.Value(1),
+        size: new Animated.Value(0),
+      };
+  
+      setHearts([...hearts, newHeart]);
+  
+      Animated.parallel([
+        Animated.timing(newHeart.position, {
+          toValue: -200,
+          duration: 800,
+          easing: Easing.ease,
+          useNativeDriver: true,
+        }),
+        Animated.timing(newHeart.opacity, {
+          toValue: 0,
+          duration: 800,
+          easing: Easing.ease,
+          useNativeDriver: true,
+        }),
+        Animated.timing(newHeart.size, {
+          toValue: 1,
+          duration: 800,
+          easing: Easing.ease,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setHearts(hearts.filter((heart) => heart.id !== newHeart.id));
+      });
+    };
+  
+    return [hearts, addHeart];
+  };
+
 const FriendHomePage = ({ route }) => {
     const { userDetails } = route.params;
     const [OrbitControls, events] = useControls();
     const [leftProgress, setLeftProgress] = useState(0);
     const [rightProgress, setRightProgress] = useState(0.3);
     const [feedRemaining, setFeedRemaining] = useState(4);
+    const [hearts, addHeart] = useHeartsAnimation();
 
     const navigation = useNavigation();
 
@@ -150,9 +191,31 @@ const FriendHomePage = ({ route }) => {
                     </Canvas>
                 </View>
 
+                {hearts.map((heart) => (
+                    <Animated.View
+                    key={heart.id}
+                    style={[
+                        styles.heart,
+                        {
+                        transform: [
+                            { translateY: heart.position },
+                            { scale: heart.size.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0, 1.2, 1] }) },
+                        ],
+                        opacity: heart.opacity,
+                        },
+                    ]}
+                    >
+                    {/* Customize the heart shape or icon */}
+                    <Text style={styles.heartIcon}>❤️</Text>
+                    </Animated.View>
+                ))}
+
                 <View style={styles.feedButtonContainer}>
                     <Text style={styles.infoText}>Feed to add health</Text>
-                    <TouchableOpacity style={styles.button} onPress={handleFeedButtonPress}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => { handleFeedButtonPress(); addHeart(); }}
+                        disabled={feedRemaining === 0 || rightProgress === 1.0}>
                     <View style={styles.buttonContent}>
                         <Icon name="heart" size={18} color="#FF8577" />
                         <Text style={styles.buttonText}>{feedRemaining} remaining</Text>
@@ -322,5 +385,15 @@ const styles = StyleSheet.create({
     },
     gothamBook: {
         fontFamily: 'GothamBook'
-    }
+    },
+    heart: {
+        position: 'absolute',
+        bottom: '20%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    heartIcon: {
+        fontSize: 30,
+        color: 'red',
+    },
 })

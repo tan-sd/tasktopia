@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, Dimensions, ScrollView, Easing, Animated } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber/native';
@@ -14,9 +14,51 @@ import { ref, getDatabase, onValue, off } from 'firebase/database';
 import ProgressBar from 'react-native-progress/Bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+const useHeartsAnimation = () => {
+  const [hearts, setHearts] = useState([]);
+
+  const addHeart = () => {
+    const newHeart = {
+      id: Date.now(),
+      position: new Animated.Value(0),
+      opacity: new Animated.Value(1),
+      size: new Animated.Value(0),
+    };
+
+    setHearts([...hearts, newHeart]);
+
+    Animated.parallel([
+      Animated.timing(newHeart.position, {
+        toValue: -200,
+        duration: 800,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+      Animated.timing(newHeart.opacity, {
+        toValue: 0,
+        duration: 800,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+      Animated.timing(newHeart.size, {
+        toValue: 1,
+        duration: 800,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setHearts(hearts.filter((heart) => heart.id !== newHeart.id));
+    });
+  };
+
+  return [hearts, addHeart];
+};
+
+
 export default function HomePage({navigation}) {
     const [dbPet, setDbPet] = useState('');
     const inkFishAnimationRef = React.useRef('');
+    const [hearts, addHeart] = useHeartsAnimation();
 
     const handleActivateAnimation = () => {
       if (inkFishAnimationRef.current && inkFishAnimationRef.current.activateAnimation) {
@@ -45,11 +87,13 @@ export default function HomePage({navigation}) {
     const [accordionOpen, setAccordionOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState([]);
     const [tasks, setTasks] = useState([
-      { id: 1, title: 'Proposal 2.3', checked: false,  project: 'Project 1', dueDate: '2023-06-30' },
-      { id: 2, title: 'Pitch Deck', checked: false, project: 'Project 1', dueDate: '2023-06-30'  },
-      { id: 3, title: 'Edit Excel', checked: false, project: 'Project 1', dueDate: '2023-06-31'  },
-      { id: 4, title: 'Proposal Meeting', checked: false, project: 'Project 2', dueDate: '2023-07-02'  },
-      { id: 5, title: 'Proposal Draft 1.0', checked: false, project: 'Project 2', dueDate: '2023-07-03'  }
+      { id: 1, title: 'Sports League - Ultimate', checked: false, project: 'Event', dueDate: '2023-06-30'},
+      { id: 2, title: 'Proposal 2.3', checked: false,  project: 'Project 1', dueDate: '2023-06-30' },
+      { id: 3, title: 'Pitch Deck', checked: false, project: 'Project 1', dueDate: '2023-06-30'  },
+      { id: 4, title: 'Edit Excel', checked: false, project: 'Project 1', dueDate: '2023-06-31'  },
+      { id: 5, title: 'Proposal Meeting', checked: false, project: 'Project 2', dueDate: '2023-07-02'  },
+      { id: 6, title: 'Proposal Draft 1.0', checked: false, project: 'Project 2', dueDate: '2023-07-03'  },
+      { id: 7, title: 'Townhall Meeting', checked: false, project: 'Event', dueDate: '2023-07-03',},
     ]);
 
     const handleAccordionToggle = () => {
@@ -60,7 +104,6 @@ export default function HomePage({navigation}) {
     };
     // End of Task Accordion
 
-    
     // Start of Events Accordion
     const [eventsAccordionOpen, setEventsAccordionOpen] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState([]);
@@ -76,10 +119,6 @@ export default function HomePage({navigation}) {
       setEventsAccordionOpen(!eventsAccordionOpen);
     };
     // End of Events Accordion
-
-
-
-
 
     const [leftProgress, setLeftProgress] = useState(0);
     const handleTaskSelection = (taskId) => {
@@ -131,8 +170,6 @@ export default function HomePage({navigation}) {
       }
     };
     
-
-    
     const [feedRemaining, setFeedRemaining] = useState(4);
     const [rightProgress, setRightProgress] = useState(0.3);
     const handleFeedButtonPress = () => {
@@ -148,6 +185,7 @@ export default function HomePage({navigation}) {
       }
     }
   };
+
     React.useEffect(() => {
         const fetchDbPet = async () => {
           const user = auth.currentUser;
@@ -247,10 +285,32 @@ export default function HomePage({navigation}) {
               </View>
           </View>
 
+          {hearts.map((heart) => (
+        <Animated.View
+          key={heart.id}
+          style={[
+            styles.heart,
+            {
+              transform: [
+                { translateY: heart.position },
+                { scale: heart.size.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0, 1.2, 1] }) },
+              ],
+              opacity: heart.opacity,
+            },
+          ]}
+        >
+          {/* Customize the heart shape or icon */}
+          <Text style={styles.heartIcon}>❤️</Text>
+        </Animated.View>
+      ))}
+
             {/* Feed Button */}
           <View style={styles.feedButtonContainer}>
             <Text style={styles.infoText}>Feed to add health</Text>
-            <TouchableOpacity style={styles.button} onPress={() => { handleFeedButtonPress(); }}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => { handleFeedButtonPress(); addHeart(); }}
+              disabled={feedRemaining === 0 || rightProgress === 1.0}>
               <View style={styles.buttonContent}>
                 <Icon name="heart" size={18} color="#FF8577" />
                 <Text style={styles.buttonText}>{feedRemaining} remaining</Text>
@@ -258,7 +318,7 @@ export default function HomePage({navigation}) {
             </TouchableOpacity>
           </View>
 
-          <View style={styles.horizontalLine} />
+          {/* <View style={styles.horizontalLine} /> */}
 
 
           {/* Add Tasks Button */}
@@ -270,7 +330,7 @@ export default function HomePage({navigation}) {
           </View>
 
           
-          {/* Join Event BUtton */}
+          {/* Join Event Button */}
           <View style={styles.joinEventButtonContainer}>
             <TouchableOpacity style={styles.joinEventButton}>
               <Icon name="plus" size={18} color="#FF8577" />
@@ -285,7 +345,7 @@ export default function HomePage({navigation}) {
                 <View>
                   <Icon name="tasks" size={24} color="black" />
                 </View>
-                <Text style={styles.accordionLabel}>Tasks</Text>
+                <Text style={styles.accordionLabel}>Tasks & Events</Text>
               </TouchableOpacity>
             {/* Accordion Content */}
               {accordionOpen && (
@@ -319,16 +379,16 @@ export default function HomePage({navigation}) {
         </View>
 
           {/* Event Accordion */}
-          <View style={styles.eventAccordionContainer}>
+          {/* <View style={styles.eventAccordionContainer}> */}
             {/* Accordion */}
-              <TouchableOpacity style={styles.eventAccordionButton} onPress={handleEventsAccordionToggle}>
+              {/* <TouchableOpacity style={styles.eventAccordionButton} onPress={handleEventsAccordionToggle}>
                 <View>
                   <Icon name="calendar" size={24} color="black" />
                 </View>
                 <Text style={styles.eventAccordionLabel}>Events</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             {/* Accordion Content */}
-              {eventsAccordionOpen && (
+              {/* {eventsAccordionOpen && (
               <View contentContainerStyle={styles.eventContentContainer}>
                 <ScrollView>
                 {allEvents.map((event) => (
@@ -356,7 +416,7 @@ export default function HomePage({navigation}) {
                 </ScrollView>
                 </View>
                 )}
-        </View>
+        </View> */}
 
 
 
@@ -378,21 +438,21 @@ const styles = StyleSheet.create({
       width: '70%',
       height: '40%',
       borderRadius: 30,
-      top: 50
+      top: 63
   },
   canvas: {
       height: '56%',
       // aspectRatio: 1,
       borderColor: 'black',
       borderRadius: 30,
-      // borderWidth: 1,          
-  },
+      // borderWidth: 1,
+    },
   canvasWrapper: {
       width: 300,
-      height: '56%',
+      height: '40%',
       bottom: 0,
       position: 'absolute',
-      top:'10%',
+      top:'8%',
   },
   progressContainer: {
     position: 'absolute',
@@ -402,6 +462,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     paddingHorizontal: 20,
+    marginTop: 12,
   },
   progressBar: {
     flexDirection: 'row',
@@ -445,7 +506,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    bottom: '40%', 
+    bottom: '41%', 
 
   },
   infoContainer: {
@@ -461,6 +522,7 @@ const styles = StyleSheet.create({
   button: {
     borderColor: 'black',
     backgroundColor: '#D9D9D9',
+    // backgroundColor: '#fff',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 14,
@@ -652,7 +714,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 5,
   },
-
-
-
+  heart: {
+    position: 'absolute',
+    bottom: '50%', // Start from the middle of the screen
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  heartIcon: {
+    fontSize: 30,
+    color: 'red',
+  },
 })
