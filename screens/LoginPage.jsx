@@ -88,61 +88,6 @@ export default function LoginPage({navigation}) {
             alert(error.message);
         })
     }
-    // const [preLogTest, setPreLogTest] = React.useState(false);
-
-    // React.useEffect(() => {
-    //     checkUserStatus();
-    // }, []);
-
-    // React.useEffect(() => {
-    //     if (preLogTest) {
-    //     login();
-    //     }
-    // }, [username, password])
-
-    // const screenWidth = Dimensions.get('screen').width;
-    // console.log(screenWidth);
-
-    // const checkUserStatus = async () => {
-    //     try {
-    //       const credentials = await Keychain.getGenericPassword();
-    //       if (credentials) {
-    //         setPreLogTest(true);
-    //         setEmail(credentials.username);
-    //         setPassword(credentials.password);
-    //       } else {
-    //       setLoading(false);
-    //       }
-    //       }
-    //     catch (error) {
-    //       console.log('Keychain couldn\'t be accessed!', error);
-    //       setLoading(false);
-    //     }}
-      
-
-    //     const login = async () => {
-    //         try {
-    //           const response = await fetch('' + 'signin', {
-    //             method: 'POST',
-    //             headers: {
-    //               Accept: 'application/json',
-    //               'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify({
-    //               username,
-    //               password,
-    //             }),
-    //           });
-    //           const responseJson = await response.json();
-    //           var message = responseJson.msg;
-    //           if (responseJson.success === true) {
-    //               await Keychain.setGenericPassword(username, password);
-    //             }
-    //           }
-    //         catch (error) {
-    //           console.error(error);
-    //         }
-    //       };
 
     const [loaded] = useFonts({
         GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
@@ -173,7 +118,7 @@ export default function LoginPage({navigation}) {
                 </View>
                 </>
 
-            } /> 
+            } />
                 <Text style={styles.labels}>Password</Text>
 
                 <Controller control={control} name="password" rules={{required:'Password is required',minLength:{
@@ -189,25 +134,24 @@ export default function LoginPage({navigation}) {
                 </>
 
             } /> 
-                {/* <TouchableHighlight style={styles.button}>
-            <Button 
-                title="Login"
-                onPress={() => navigation.navigate('AnimalSelection')}/></TouchableHighlight> */}
-            
-            
-            
+
+                        
             <View style={styles.login}>
             <TouchableOpacity style={styles.button} onPress={() => handleSignIn(email, password)}>
                 <Text style={{textAlign: 'center', marginTop: 10, color:'white',fontFamily: 'GothamBold'}}>Login</Text>
 
             </TouchableOpacity>
             </View>
-            {/* <CustomButton onPress={onLogin} text="Login" /> */}
-
-            {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AnimalSelection')}>
-                <Text style={{textAlign: 'center', marginTop: 10, color:'white', fontFamily: 'GothamBold'}}>Login</Text>
-            </TouchableOpacity></View> */}
+         
             </View>
+
+            {/* <View style={styles.admin}>
+            <TouchableOpacity style={[styles.button, {backgroundColor: "#EF524A"}]} onPress={() => handleSignIn(email, password)}>
+                <Text style={{textAlign: 'center', marginTop: 10, color:'white',fontFamily: 'GothamBold'}}>Admin Login</Text>
+
+            </TouchableOpacity>
+            </View> */}
+          
         </SafeAreaView>
         </>
     )
@@ -257,5 +201,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         justifyContent: 'center',
         marginBottom: '5%'
+    },
+    admin:{
+        margin: 10
     }
 })
