@@ -10,6 +10,7 @@ import ProfilePage from './screens/ProfilePage';
 import FriendsPage from './screens/FriendsPage';
 import AdminPage from "./screens/AdminPage";
 import FriendHomePage from './components/FriendHomePage';
+import UserTasks from './screens/UserTasks';
 import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import React from 'react';
 import { auth } from './firebase/firebase';
@@ -35,7 +36,7 @@ function Home() {
 
       const adminRef = onValue(dbRef, (snapshot) => {
         const adminValue = snapshot.val();
-        console.log(adminValue)
+        // console.log(adminValue)
         isAdmin(adminValue);
       })
       return () => {
@@ -127,6 +128,13 @@ export default function App() {
           <Stack.Screen
             name="FriendHomePage"
             component={FriendHomePage}
+            options={{ headerShown: false }}
+          />
+
+          {/*after clicking manage users on admin  */}
+          <Stack.Screen
+            name="UserTasks"
+            component={UserTasks}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
