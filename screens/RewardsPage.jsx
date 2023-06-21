@@ -1,8 +1,31 @@
 import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
+import { auth } from '../firebase/firebase';
+import { ref, getDatabase, onValue, off } from 'firebase/database';
+import { useState } from 'react';
+
 
 export default function RewardsPage({navigation}) {
+    const [dbPet, setDbPet] = useState('');
+
+    React.useEffect(() => {
+        const fetchDbPet = async () => {
+          const user = auth.currentUser;
+          const dbRef = ref(getDatabase(), `users/${user.uid}/selectedPet`);
+      
+          const petRef = onValue(dbRef, (snapshot) => {
+            const selectedPet = snapshot.val();
+            setDbPet(selectedPet);
+          });
+      
+          return () => {
+            off(petRef);
+          };
+        };
+      
+        fetchDbPet();
+      }, []);
     return (
         <>
         <SafeAreaView style={styles.container}>
@@ -16,16 +39,31 @@ export default function RewardsPage({navigation}) {
                 </View>
 
                 <View style={{alignSelf: 'center', marginTop: 25}}>
+                {dbPet === 'pudu' && (
                     <Image
                         source={require('../assets/animals/img/Pudu.png')}
                         style={styles.petImg}
                         />
+                )}
+                {dbPet === 'sparrow' && (
+                    <Image
+                        source={require('../assets/animals/img/Sparrow.png')}
+                        style={styles.petImg}
+                        />
+                )}
+                {dbPet === 'inkfish' && (
+                    <Image
+                        source={require('../assets/animals/img/InkFish.png')}
+                        style={styles.petImg}
+                        />
+                )}
                     <View style={styles.levelWrapper}>
                         <Text style={[styles.levelBar, styles.gothamBold]}>
                             Level 1
                         </Text>
                         <View style={styles.levelProgress}></View>
                     </View>
+ 
                 </View>
 
                 <View style={styles.rewardsTierWrapper}>

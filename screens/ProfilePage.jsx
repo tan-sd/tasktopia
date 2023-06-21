@@ -2,8 +2,59 @@ import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, Saf
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { useFonts } from 'expo-font';
+import { auth } from '../firebase/firebase';
+import { ref as ref_database, getDatabase, onValue, off } from 'firebase/database';
+import { useState } from 'react';
+import { getStorage, ref as ref_storage, getDownloadURL } from "firebase/storage";
 
 export default function ProfilePage({navigation}) {
+    const [dbPet, setDbPet] = useState('');
+    const [jRole, setJRole] = useState('');
+    const [fName, setFName] = useState('');
+    const [lName, setLName] = useState('');
+    const [profilePic, setProfilePic] = useState('');
+
+    React.useEffect(() => {
+        const fetchDbPet = async () => {
+          const user = auth.currentUser;
+          const storage = getStorage();
+          const dbRef = ref_database(getDatabase(), `users/${user.uid}`);
+      
+          const petRef = onValue(dbRef, (snapshot) => {
+            const selectedPet = snapshot.val().selectedPet;
+            const firstName = snapshot.val().firstName;
+            const lastName = snapshot.val().lastName;
+            const jobRole = snapshot.val().jobRole;
+            const profileImg = snapshot.val().profileImg;
+
+            const pathReference = ref_storage(storage, profileImg);
+
+            const fetchDownloadUrl = async () => {
+                try {
+                const url = await getDownloadURL(pathReference);
+                setProfilePic(url);
+            } catch (error) {
+                console.error('Error getting download URL:', error)
+            }
+        };
+
+
+            console.log(pathReference);
+            setDbPet(selectedPet);
+            setFName(firstName);
+            setLName(lastName);
+            setJRole(jobRole);
+            fetchDownloadUrl();
+          }, []);
+      
+          return () => {
+            off(petRef);
+          };
+        };
+      
+        fetchDbPet();
+      }, []);
+
     const [loaded] = useFonts({
         GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
         GothamBook: require('../assets/fonts/Gotham-Book.otf')
@@ -26,15 +77,15 @@ export default function ProfilePage({navigation}) {
 
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Image
-                        source={require('../assets/favicon.png')}
+                        source={{uri: profilePic}}
                         style={styles.profileImg}
                         resizeMode="cover"
                     />
                     <View style={styles.profileDetails}>
-                        <Text style={[styles.profileName, styles.gothamBold]}>Name</Text>
-                        <Text style={[styles.profileJobRole, styles.gothamBook]}>Job Role</Text>
+                        <Text style={[styles.profileName, styles.gothamBold]}>{fName} {lName}</Text>
+                        <Text style={[styles.profileJobRole, styles.gothamBook]}>{jRole}</Text>
                         <View style={{flexDirection: 'row', marginTop: 25}}>
-                        <Text style={styles.gothamBook}>Animal, Level</Text>
+                        <Text style={styles.gothamBook}>{dbPet.charAt(0).toUpperCase()}{dbPet.slice(1)}, Level</Text>
                         </View>
                     </View>
                 </View>
