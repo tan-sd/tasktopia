@@ -96,7 +96,7 @@ export default function ProfilePage({navigation}) {
                         <Text style={[styles.profileName, styles.gothamBold]}>{fName} {lName}</Text>
                         <Text style={[styles.profileJobRole, styles.gothamBook]}>{jRole}</Text>
                         <View style={{flexDirection: 'row', marginTop: 25}}>
-                        <Text style={styles.gothamBook}>{dbPet.charAt(0).toUpperCase()}{dbPet.slice(1)}, Level</Text>
+                        <Text style={styles.gothamBook}><Text style={styles.gothamBold}>{dbPet.charAt(0).toUpperCase()}{dbPet.slice(1)}</Text>, Level 4</Text>
                         </View>
                     </View>
                 </View>
