@@ -166,6 +166,19 @@ export default function HomePage({navigation}) {
       if (isTaskSelected) {
         setLeftProgress((prevProgress) => prevProgress + 0.1);
         setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds + 1);
+
+      // }else {
+      //   setLeftProgress((prevProgress) => prevProgress - 0.1);
+      //   if (feedRemaining > 0){
+      //     setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds - 1);
+      //   }
+      // }
+        // Increase or decrease progress and feed counts based on task selection
+
+      //Increase level progress bar by 0.1
+      if (isTaskSelected) {
+        setLeftProgress((prevProgress) => prevProgress + 0.1);
+        setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds + 1);
       } else {
         setLeftProgress((prevProgress) => prevProgress - 0.1);
         if (feedRemaining > 0) {
@@ -365,27 +378,6 @@ export default function HomePage({navigation}) {
             </TouchableOpacity>
           </View>
 
-          {/* <View style={styles.horizontalLine} /> */}
-
-
-          {/* Add Tasks Button */}
-          <View style={styles.addTaskButtonContainer}>
-            <TouchableOpacity style={styles.addTaskButton}>
-              <Icon name="plus" size={18} color="#FF8577" />
-              <Text marginLeft={4} >Add Task</Text> 
-            </TouchableOpacity>
-          </View>
-
-          
-          {/* Join Event Button */}
-          <View style={styles.joinEventButtonContainer}>
-            <TouchableOpacity style={styles.joinEventButton}>
-              <Icon name="plus" size={18} color="#FF8577" />
-              <Text marginLeft={4}>Join Event</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Task Accordion */}
           <View style={styles.accordionContainer}>
             {/* Accordion */}
               <TouchableOpacity style={styles.accordionButton} onPress={handleAccordionToggle}>

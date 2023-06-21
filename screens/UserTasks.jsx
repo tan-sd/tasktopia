@@ -9,7 +9,7 @@ import { ref, getDatabase, onValue, off } from 'firebase/database';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const UserTasks = ({route}) =>{
-
+    
     const { userDetails } = route.params;
     const navigation = useNavigation();
 
@@ -19,14 +19,36 @@ const UserTasks = ({route}) =>{
     
     const [accordionOpen, setAccordionOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState([]);
-    const [tasks, setTasks] = useState([
-        { id: 1, title: 'Proposal 2.3', checked: false,  project: 'Project 1', dueDate: '2023-06-30' },
-        { id: 2, title: 'Pitch Deck', checked: false, project: 'Project 1', dueDate: '2023-06-30'  },
-        { id: 3, title: 'Edit Excel', checked: false, project: 'Project 1', dueDate: '2023-06-31'  },
-        { id: 4, title: 'Proposal Meeting', checked: false, project: 'Project 2', dueDate: '2023-07-02'  },
-        { id: 5, title: 'Proposal Draft 1.0', checked: false, project: 'Project 2', dueDate: '2023-07-03'  }
+    const [appTasks, setAppTasks] = useState([
+        { id: 1, title: 'Pitch Deck for Client', checked: false, project: 'Project 2A', dueDate: '2023-07-02'  },
+        { id: 2, title: 'Marketing Proposal Draft 1.0', checked: false, project: 'Project 2A', dueDate: '2023-07-03'  }
       ]);
 
+      const [tasks, setTasks] = useState([
+        { id: 1, title: 'Sports League - Ultimate', checked: false, project: 'Event', dueDate: '2023-06-30'},
+        { id: 2, title: 'Proposal 2.3', checked: false,  project: 'Project 1', dueDate: '2023-06-30' },
+        { id: 3, title: 'Pitch Deck', checked: false, project: 'Project 1', dueDate: '2023-06-30'  },
+        { id: 4, title: 'Edit Excel', checked: false, project: 'Project 1', dueDate: '2023-06-31'  },
+        { id: 5, title: 'Proposal Meeting', checked: false, project: 'Project 2', dueDate: '2023-07-02'  },
+        { id: 6, title: 'Proposal Draft 1.0', checked: false, project: 'Project 2', dueDate: '2023-07-03'  },
+        { id: 7, title: 'Townhall Meeting', checked: false, project: 'Event', dueDate: '2023-07-03',},
+      ]);
+
+
+    //   this one for approval
+      const handleTaskSelection = (taskId) => {
+        const updatedTasks = appTasks.map((task) => {
+          if (task.id === taskId) {
+            return { ...task, checked: !task.checked };
+          }
+          return task;
+        });
+        setSelectedTask(updatedTasks.filter((task) => task.checked).map((task) => task.id));
+        setAppTasks(updatedTasks);
+        
+   
+      }
+      
       const [giveTask, setNewTask] = useState('');
 
         const handleInputChange = (text) => {
@@ -75,15 +97,74 @@ const UserTasks = ({route}) =>{
                 />
             </View>
         </View>
-        <View style={{display:flex, justifyContent:'space-around'}} >
+
+        <View style={{top: 200,position: "absolute",left: 5,marginLeft: 40,marginTop: 30,}}>
+
+        <Text style={styles.accordionLabel}>Allocate New Tasks</Text>
+        <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:25}} >
+            <View style={{ width:400, height: 700, marginRight: 50 }}>
             <TextInput
-            style={{ borderWidth: 1, padding: 10, width:200 }}
+            style={{ borderWidth: 1, padding: 10, height: 300, borderRadius: 10}}
             value={giveTask}
+            multiline
+            numberOfLines={8}
             onChangeText={setNewTask}
             placeholder="Enter new task here"
             />
-            <Button title="Allocate Task" onPress={handleSubmit} />
+
+            </View>
+            <View>
+
+            <Button title="Allocate Task" onPress={handleSubmit} buttonStyle={{ textAlign: 'center', alignItems:'center' }} />
+            </View>
         </View>
+
+        </View>
+
+        {/* approved tasks */}
+
+        <View style={{top: 600,position: "absolute",left: 5,marginLeft: 40,marginTop: 30,}}>
+
+        <Text style={styles.accordionLabel}>Waiting to be approved tasks</Text>
+        <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:25}} >
+            <View style={{ width:200, height: 700, marginRight: 50 }}>
+
+            <View>
+                   
+            <ScrollView>
+                {appTasks.map((task) => (
+                  <TouchableOpacity
+                    key={task.id}
+                    style={styles.taskItem}
+                    onPress={() => handleTaskSelection(task.id)}
+                  >
+                      <View style={styles.taskCheckBox}>
+                        {task.checked ? (
+                          <Icon name="check-square-o" size={20} color="black" />
+                        ) : (
+                          <Icon name="square-o" size={20} color="black" />
+                        )}
+                      </View>
+                      <View style={styles.taskContent}>
+                        <Text style={styles.taskText}>{task.title}</Text>
+                        <View style={styles.taskBadges}>
+                          <Text style={styles.badgeProject}>{task.project}</Text>
+                          <Text style={styles.badgeDate}>{task.dueDate}</Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+                      
+            </View>
+            </View>
+            <View>
+
+            </View>
+        </View>
+        </View>
+
+
           <View style={styles.accordionContainer}>
             {/* ONGOING Accordion */}
               <TouchableOpacity style={styles.accordionButton} onPress={handleAccordionToggle}>
@@ -97,6 +178,7 @@ const UserTasks = ({route}) =>{
               {accordionOpen && (
               <View contentContainerStyle={styles.taskContentContainer}>
                 <ScrollView>
+                    {/* here */}
                 {tasks.map((task) => (
                   <TouchableOpacity
                     key={task.id}
@@ -145,7 +227,19 @@ export default UserTasks;
 const styles = StyleSheet.create({
     profileWrapper: {
         marginLeft: 40,
-        marginTop: 15
+        marginTop: 15,
+        alignContent: 'center',
+    },
+    // friendDetailsWrapper: {
+    // },
+    friendName: {
+        fontSize: 24,
+        marginLeft: 20,
+    },
+    friendJobRole: {
+        marginTop: 5,
+        marginLeft: 20,
+        fontSize: 14
     },
     profileImg: {
         borderColor: 'black',
