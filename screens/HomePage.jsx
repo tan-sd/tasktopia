@@ -47,7 +47,7 @@ export default function HomePage({navigation}) {
     const [accordionOpen, setAccordionOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState([]);
     const [tasks, setTasks] = useState([
-      { id: 1, title: 'HELP', checked: false,  project: 'Project 1', dueDate: '2023-06-30' },
+      { id: 1, title: 'Proposal 2.3', checked: false,  project: 'Project 1', dueDate: '2023-06-30' },
       { id: 2, title: 'Pitch Deck', checked: false, project: 'Project 1', dueDate: '2023-06-30'  },
       { id: 3, title: 'Edit Excel', checked: false, project: 'Project 1', dueDate: '2023-06-31'  },
       { id: 4, title: 'Proposal Meeting', checked: false, project: 'Project 2', dueDate: '2023-07-02'  },
@@ -62,7 +62,8 @@ export default function HomePage({navigation}) {
     };
 
     const [leftProgress, setLeftProgress] = useState(0);
-
+    
+    
     const handleTaskSelection = (taskId) => {
       const updatedTasks = tasks.map((task) => {
         if (task.id === taskId) {
@@ -72,14 +73,33 @@ export default function HomePage({navigation}) {
       });
       setSelectedTask(updatedTasks.filter((task) => task.checked).map((task) => task.id));
       setTasks(updatedTasks);
-
+      
       //Increase level progress bar by 0.1
       if (updatedTasks.find((task) => task.id === taskId).checked) {
         setLeftProgress((prevProgress) => prevProgress + 0.1);
+
+        setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds + 1);
+
       }else {
         setLeftProgress((prevProgress) => prevProgress - 0.1);
+        if (feedRemaining > 0){
+          setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds - 1);
+        }
+
       }
     }
+    
+    const [feedRemaining, setFeedRemaining] = useState(4);
+    const [rightProgress, setRightProgress] = useState(0.3);
+    const handleFeedButtonPress = () => {
+      if (feedRemaining > 0 && rightProgress < 1) {
+        setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds - 1);
+
+        if (rightProgress < 1) {
+        setRightProgress((prevProgress) => Math.round((prevProgress + 0.1)*10)/10);
+      }}
+    };
+    
 
     React.useEffect(() => {
         const fetchDbPet = async () => {
@@ -156,7 +176,7 @@ export default function HomePage({navigation}) {
                   <Icon name="star" size={18} color="black" />
                 </View>
                   <ProgressBar
-                    progress={0.1} // progress value 40%
+                    progress={leftProgress + 0.4} // progress value 40%
                     width={135}
                     height={25}
                     borderRadius={20}
@@ -164,7 +184,7 @@ export default function HomePage({navigation}) {
                     color={'#FF8577'}
                   />
                     <View style={styles.progressTextContainer}>
-                      <Text style={styles.progressText}>Level 5</Text>
+                      <Text style={styles.progressText}>Level 4</Text>
                     </View>
               </View>
             {/* Health Progress Bar */}
@@ -173,7 +193,7 @@ export default function HomePage({navigation}) {
                   <Icon name="heart" size={18} color="black" />
                 </View>
                 <ProgressBar
-                  progress={0.8} // progress value (30%)
+                  progress={rightProgress} // progress value (30%)
                   width={135}
                   height={25}
                   borderRadius={20}
@@ -181,7 +201,7 @@ export default function HomePage({navigation}) {
                   color={'#FF8577'}
                 />
                 <View style={styles.progressTextContainer}>
-                  <Text style={styles.progressText}>30%</Text>
+                  <Text style={styles.progressText}>{rightProgress *100 }%</Text>
                 </View>
               </View>
           </View>
@@ -189,10 +209,10 @@ export default function HomePage({navigation}) {
             {/* Feed Button */}
           <View style={styles.feedButtonContainer}>
             <Text style={styles.infoText}>Feed to add health</Text>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button}  onPress={handleFeedButtonPress}>
               <View style={styles.buttonContent}>
                 <Icon name="heart" size={18} color="#FF8577" />
-                <Text style={styles.buttonText}>4 remaining</Text>
+                <Text style={styles.buttonText}>{feedRemaining} remaining</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -394,6 +414,7 @@ const styles = StyleSheet.create({
     borderRadius: 5, 
     backgroundColor: '#FFF5DB', 
     padding: 5, 
+
   },
   taskContent: {
     flex: 1,
