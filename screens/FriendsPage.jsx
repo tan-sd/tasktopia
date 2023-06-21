@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 50,
         width: 90,
-        height: 90
+        height: 90,
     },
     friendDetailsWrapper: {
         alignContent: 'center',
@@ -157,7 +157,8 @@ const styles = StyleSheet.create({
     },
     friendJobRole: {
         marginTop: 5,
-        fontSize: 14
+        fontSize: 14,
+        width: 200
     },
     visitButton: {
         borderWidth: 1,
