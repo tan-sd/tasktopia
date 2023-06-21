@@ -4,12 +4,14 @@ import * as React from 'react';
 import { auth } from '../firebase/firebase';
 import { ref, getDatabase, onValue, off } from 'firebase/database';
 import { useState } from 'react';
-
+import ProgressBar from 'react-native-progress/Bar';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function RewardsPage({navigation}) {
     const [dbPet, setDbPet] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [buttonColor, setButtonColor] = useState('')
+    
 
     React.useEffect(() => {
         const fetchDbPet = async () => {
@@ -59,12 +61,29 @@ export default function RewardsPage({navigation}) {
                         style={styles.petImg}
                         />
                 )}
-                    <View style={styles.levelWrapper}>
+                    {/* <View style={styles.levelWrapper}>
                         <Text style={[styles.levelBar, styles.gothamBold]}>
-                            Level 1
+                            Level 4
                         </Text>
                         <View style={styles.levelProgress}></View>
+                    </View> */}
+
+                    <View style={[styles.progressBar, styles.leftProgressBar]}>
+                <View style={styles.iconContainer}>
+                  <Icon name="star" size={18} color="black" />
+                </View>
+                  <ProgressBar
+                    progress={0.4} // progress value 40%
+                    width={135}
+                    height={25}
+                    borderRadius={20}
+                    borderWidth={3}
+                    color={'#FF8577'}
+                  />
+                    <View style={styles.progressTextContainer}>
+                      <Text style={styles.progressText}>Level 4</Text>
                     </View>
+              </View>
  
                 </View>
 
@@ -282,5 +301,36 @@ const styles = StyleSheet.create({
       modalText: {
         marginBottom: 15,
         textAlign: 'center',
+      },
+      progressBar: {
+        marginTop: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+        position: 'relative',
+      },
+      progressTextContainer: {
+        position: 'absolute',
+        left: 30,
+        right: 0,
+        top: '40%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        transform: [{ translateY: -6 }],
+      },
+      progressText: {
+        color: 'black',
+        fontSize: 14,
+        fontWeight: 'bold',
+      },
+      iconContainer: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        borderWidth: 2.5,
+        borderColor: 'black',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 2,
       },
 })
