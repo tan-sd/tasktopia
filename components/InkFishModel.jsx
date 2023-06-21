@@ -92,7 +92,7 @@ export default function InkFishModel({animationRef}) {
         });
   
       return (
-          <mesh rotation={[0.1, -0.4, 0]} position={[0, -1.5, 0]} dispose={null}>
+          <mesh rotation={[0.1, -0.4, 0]} position={[0, -2, 0]} dispose={null}>
               <primitive object={gltf.scene} scale={3} onClick={handleClick}/>
           </mesh>
       );
