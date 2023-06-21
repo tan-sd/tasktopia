@@ -9,23 +9,20 @@ import useControls from 'r3f-native-orbitcontrols';
 import PuduModel from '../components/PuduModel';
 import SparrowModel from '../components/SparrowModel';
 import InkFishModel from '../components/InkFishModel';
-import { signOutUser } from '../firebase/firebase';
 import { auth } from '../firebase/firebase';
 import { ref, getDatabase, onValue, off } from 'firebase/database';
-import ProgressBar from 'react-native-progress/Bar'
-import Icon from 'react-native-vector-icons/FontAwesome'
+import ProgressBar from 'react-native-progress/Bar';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function HomePage({navigation}) {
     const [dbPet, setDbPet] = useState('');
+    const inkFishAnimationRef = React.useRef('');
 
-    const handleSignOut= () => {
-        signOutUser()
-        .then(() => {
-            navigation.replace('Login');
-        }).catch((error) => {
-            alert(error.message);
-        })
-    }
+    const handleActivateAnimation = () => {
+      if (inkFishAnimationRef.current && inkFishAnimationRef.current.activateAnimation) {
+        inkFishAnimationRef.current.activateAnimation();
+      }
+    };
 
     const glRef = useRef();
 
@@ -97,10 +94,13 @@ export default function HomePage({navigation}) {
 
         if (rightProgress < 1) {
         setRightProgress((prevProgress) => Math.round((prevProgress + 0.1)*10)/10);
-      }}
-    };
-    
+      }
 
+      if (inkFishAnimationRef.current && inkFishAnimationRef.current.activateAnimation) {
+        inkFishAnimationRef.current.activateAnimation();
+      }
+    }
+  };
     React.useEffect(() => {
         const fetchDbPet = async () => {
           const user = auth.currentUser;
@@ -156,16 +156,9 @@ export default function HomePage({navigation}) {
                                 {/* <PuduModel /> */}
                                 {dbPet === 'pudu' && <PuduModel />}
                                 {dbPet === 'sparrow' && <SparrowModel />}
-                                {dbPet === 'inkfish' && <InkFishModel />}
+                                {dbPet === 'inkfish' && <InkFishModel animationRef={inkFishAnimationRef} />}
                             </Suspense>
                     </Canvas>
-                </View>
-                <View>
-                  <TouchableOpacity
-                    onPress={handleSignOut}
-                    >
-                    <Text>Log out</Text>
-                  </TouchableOpacity>
                 </View>
             </View>
 
@@ -209,7 +202,7 @@ export default function HomePage({navigation}) {
             {/* Feed Button */}
           <View style={styles.feedButtonContainer}>
             <Text style={styles.infoText}>Feed to add health</Text>
-            <TouchableOpacity style={styles.button}  onPress={handleFeedButtonPress}>
+            <TouchableOpacity style={styles.button} onPress={() => { handleFeedButtonPress(); }}>
               <View style={styles.buttonContent}>
                 <Icon name="heart" size={18} color="#FF8577" />
                 <Text style={styles.buttonText}>{feedRemaining} remaining</Text>
