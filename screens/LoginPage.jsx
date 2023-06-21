@@ -174,8 +174,9 @@ const styles = StyleSheet.create({
     },
     labels: {
         color: '#EF524A',
-        fontFamily: "GothamBook",
-        marginTop: '5%'
+        fontFamily: "GothamBold",
+        marginTop: '5%',
+        fontSize: 15
     },
     middleSection: {
         display: 'flex',
