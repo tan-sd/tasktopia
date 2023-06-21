@@ -217,6 +217,27 @@ export default function HomePage({navigation}) {
             </TouchableOpacity>
           </View>
 
+          <View style={styles.horizontalLine} />
+
+
+          {/* Add Tasks Button */}
+          <View style={styles.addTaskButtonContainer}>
+            <TouchableOpacity style={styles.addTaskButton}>
+              <Icon name="plus" size={18} color="#FF8577" />
+              <Text marginLeft={4} >Add Task</Text> 
+            </TouchableOpacity>
+          </View>
+
+          
+          {/* Join Event BUtton */}
+          <View style={styles.joinEventButtonContainer}>
+            <TouchableOpacity style={styles.joinEventButton}>
+              <Icon name="plus" size={18} color="#FF8577" />
+              <Text marginLeft={4}>Join Event</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Task Accordion */}
           <View style={styles.accordionContainer}>
             {/* Accordion */}
               <TouchableOpacity style={styles.accordionButton} onPress={handleAccordionToggle}>
@@ -257,6 +278,8 @@ export default function HomePage({navigation}) {
           
 
         </View>
+
+
         </SafeAreaView>
         </>
     )
@@ -374,7 +397,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   accordionContainer: {
-    top: '70%',
+    top: '75%',
     // marginTop: 10,
     // marginBottom: 10,
     borderWidth: 1,
@@ -445,5 +468,43 @@ const styles = StyleSheet.create({
   taskContentContainer: {
     paddingBottom: 150, // Add some padding to the bottom to ensure scrolling space
     height: 200,
+  },
+  horizontalLine: {
+    borderBottomColor: 'black',
+    borderWidth: 0.5,
+    width: '100%', 
+    bottom: '38%',
+  },  
+  addTaskButtonContainer: {
+    width: '100%',
+    alignItems: 'left',
+    // justifyContent: 'center',
+    position: 'absolute',
+    bottom: '33%', 
+    paddingLeft: 20,
+  },
+  addTaskButton:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 5,
+    // color: '#FFC700',
+    // margin: 5,
+  },
+  joinEventButtonContainer: {
+    width: '100%',
+    alignItems: 'left',
+    // justifyContent: 'center',
+    position: 'absolute',
+    bottom: '33%', 
+    paddingLeft: 120,
+  },
+  joinEventButton:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 5,
   },
 })
