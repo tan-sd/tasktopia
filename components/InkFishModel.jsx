@@ -3,8 +3,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { useRef, useLayoutEffect } from 'react';
 import { TextureLoader } from 'expo-three';
 
-export default function InkFishModel(props) {
+export default function InkFishModel({animationRef}) {
     const defaultAnimation = useRef(null);
+    const clickAnimation = useRef(null);
   
     const handleClick = () => {
       const clickAnimation = mixer.current.clipAction(gltf.animations[2]);
@@ -20,11 +21,22 @@ export default function InkFishModel(props) {
         // mixer.current.clipAction(gltf.animations[13]).play();
       })
     }
+
+    const activateAnimation = () => {
+      if (clickAnimation.current && defaultAnimation.current) {
+        clickAnimation.current.reset().setLoop(THREE.LoopOnce).play();
   
+        clickAnimation.current.clampWhenFinished = true;
+        clickAnimation.current.paused = false;
+        clickAnimation.current.setLoop(THREE.LoopOnce, 1, () => {
+          defaultAnimation.current.enabled = true;
+          defaultAnimation.current.play();
+        });
+      }
+    };
+
       const [base] = useLoader(TextureLoader, [
           require('../assets/animals/textures/T_Inkfish.png'),
-          // require('./assets/Airmax/textures/Normal.jpg'),
-          // require('./assets/Airmax/textures/Roughness.png'),
         ]);
   
       const gltf = useLoader(
@@ -48,6 +60,7 @@ export default function InkFishModel(props) {
         if (gltf.animations && gltf.animations.length > 0) {
                 mixer.current = new THREE.AnimationMixer(gltf.scene);
                 defaultAnimation.current = mixer.current.clipAction(gltf.animations[16]);
+                clickAnimation.current = mixer.current.clipAction(gltf.animations[12]);
                 defaultAnimation.current.play();
   
                 // const action = mixer.current.clipAction(gltf.animations[13]);
@@ -58,6 +71,14 @@ export default function InkFishModel(props) {
                 }
               }
             }, [gltf.animations]);
+
+            useLayoutEffect(() => {
+              if (animationRef && animationRef.current) {
+                animationRef.current = {
+                  activateAnimation,
+                };
+              }
+            }, [animationRef]);          
   
         useFrame((state, delta) => {
           // let { x, y, z } = props.animatedSensor.sensor.value;

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -10,11 +10,16 @@ import ProfilePage from './screens/ProfilePage';
 import FriendsPage from './screens/FriendsPage';
 import AdminPage from "./screens/AdminPage";
 import { LogBox } from 'react-native';
+import FriendHomePage from './components/FriendHomePage';
 import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import { AuthContext, AuthContextProvider } from "./AuthContext";
 import React from 'react';
 import { auth } from './firebase/firebase';
 import { ref, getDatabase, onValue, off } from 'firebase/database';
+
+LogBox.ignoreAllLogs();
+
+LogBox.ignoreAllLogs();
 
 LogBox.ignoreLogs(
   ['Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives: https://threejs.org/docs/index.html#manual/en/introduction/Installation']
@@ -101,30 +106,35 @@ function Home() {
 export default function App() {
   return (
     <>
-      <AuthContextProvider>
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="Login"
-              component={LoginPage}
-              options={{ headerShown: false }}
-            // options={{title: 'Welcome'}}
-            />
 
-            <Stack.Screen
-              name="AnimalSelection"
-              component={AnimalSelection}
-              options={{ headerShown: false }}
-            />
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Login"
+            component={LoginPage}
+            options={{ headerShown: false }}
+          // options={{title: 'Welcome'}}
+          />
 
-            <Stack.Screen
-              name="HomePage"
-              component={Home}
-              options={{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </AuthContextProvider>
+          <Stack.Screen
+            name="AnimalSelection"
+            component={AnimalSelection}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name="HomePage"
+            component={Home}
+            options={{ headerShown: false }}
+          />
+
+          <Stack.Screen
+            name="FriendHomePage"
+            component={FriendHomePage}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </>
   );
 }

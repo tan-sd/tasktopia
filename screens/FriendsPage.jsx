@@ -13,70 +13,59 @@ export default function FriendsPage({navigation}) {
     const [convertedData, setConvertedData] = React.useState([]);
     const storage = getStorage();
 
-    var data = '';
-    const friendsRef = ref_database(database, 'users/');
-
-    React.useEffect(()=>{
-        onValue(friendsRef, (snapshot) => {
-            data = snapshot.val();
-        })
-        setFriends(data);
-    }, [])
-
-    
-
-    const convertImageURLs = async (data) => {
-        const convertedData = [];
-
-        for (const userId in data) {
-            const user = data[userId];
-            const { firstName, lastName, jobRole, profileImg } = user;
-
-            if (profileImg) {
-                try {
-                    const storage = getStorage();
-                    const storageRef = ref_storage(storage, profileImg);
-                    const url = await getDownloadURL(storageRef);
-
-                    const convertedUser = {
-                    userId,
-                    firstName,
-                    lastName,
-                    jobRole,
-                    profileImg: url,
-                    };
-
-                    convertedData.push(convertedUser);
-                } catch (error) {
-                    console.error('Error converting image URL:', error);
-                }
-            }
-        }
-    return convertedData;
-    };
-
-    const handleDataConversion = async () => {
-    try {
-        const convertedData = await convertImageURLs(data);
-        // Use the converted data in your React Native component or perform further operations
-        console.log(convertedData);
-    } catch (error) {
-        console.error('Error converting image URLs:', error);
-    }
-    };
-
-    handleDataConversion();
+    const handleVisitPress = (userDetails) => {
+        navigation.navigate('FriendHomePage', { userDetails });
+      };  
 
     React.useEffect(() => {
         const fetchDataAndConvertImages = async () => {
-
-        const convertedData = await convertImageURLs(data);
-        
-        setConvertedData(convertedData);
+          try {
+            const friendsRef = ref_database(database, 'users/');
+            onValue(friendsRef, (snapshot) => {
+              const data = snapshot.val();
+    
+              if (data) {
+                convertAndSetData(data);
+              }
+            });
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
         };
-        
+    
         fetchDataAndConvertImages();
-    }, []);
+      }, []);
+    
+      const convertAndSetData = async (data) => {
+        const convertedData = [];
+    
+        for (const userId in data) {
+          const user = data[userId];
+          const { selectedPet, firstName, lastName, jobRole, profileImg } = user;
+    
+          if (profileImg) {
+            try {
+              const storageRef = ref_storage(storage, profileImg);
+              const url = await getDownloadURL(storageRef);
+    
+              const convertedUser = {
+                selectedPet,
+                userId,
+                firstName,
+                lastName,
+                jobRole,
+                profileImg: url,
+              };
+    
+              convertedData.push(convertedUser);
+            } catch (error) {
+              console.error('Error converting image URL:', error);
+            }
+          }
+        }
+    
+        setConvertedData(convertedData);
+      };
         
     const [loaded] = useFonts({
         GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
@@ -114,7 +103,10 @@ export default function FriendsPage({navigation}) {
                             <View style={styles.friendDetailsWrapper}>
                                 <Text style={[styles.friendName, styles.gothamBold]}>{item.firstName} {item.lastName}</Text>
                                 <Text style={[styles.friendJobRole, styles.gothamBook]}>{item.jobRole}</Text>
-                                <TouchableOpacity style={styles.visitButton}>
+                                <TouchableOpacity
+                                    style={styles.visitButton}
+                                    onPress={() => handleVisitPress(item)}
+                                    >
                                     <Text style={{...styles.gothamBook, textAlign: 'center'}}>Visit</Text>
                                 </TouchableOpacity>
                             </View>

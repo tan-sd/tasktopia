@@ -6,6 +6,8 @@ import { auth } from '../firebase/firebase';
 import { ref as ref_database, getDatabase, onValue, off } from 'firebase/database';
 import { useState } from 'react';
 import { getStorage, ref as ref_storage, getDownloadURL } from "firebase/storage";
+import { signOutUser } from '../firebase/firebase';
+import Icon from 'react-native-vector-icons/Feather'
 
 export default function ProfilePage({navigation}) {
     const [dbPet, setDbPet] = useState('');
@@ -13,6 +15,15 @@ export default function ProfilePage({navigation}) {
     const [fName, setFName] = useState('');
     const [lName, setLName] = useState('');
     const [profilePic, setProfilePic] = useState('');
+
+    const handleSignOut= () => {
+        signOutUser()
+        .then(() => {
+            navigation.replace('Login');
+        }).catch((error) => {
+            alert(error.message);
+        })
+    }
 
     React.useEffect(() => {
         const fetchDbPet = async () => {
@@ -111,6 +122,15 @@ export default function ProfilePage({navigation}) {
                         </Text>
                     </View>
                 </View>
+
+                <View>
+                <View style={styles.logOutBtnContainer}>
+                    <TouchableOpacity onPress={handleSignOut} style={{flexDirection: 'row', gap: 10}}>
+                        <Icon name="log-out" size={18} color="black" />
+                        <Text style={styles.logOutBtnText}>Log out</Text>
+                    </TouchableOpacity>
+                </View>
+                </View>
             </View>
         </SafeAreaView>
         </>
@@ -161,6 +181,20 @@ const styles = StyleSheet.create({
         width: '40%',
         marginRight: 10,
         marginBottom: 20
+    },
+    logOutBtnContainer: {
+        alignSelf: 'center',
+        backgroundColor: '#f2f2f2',
+        paddingHorizontal: 20,
+        paddingVertical: 11,
+        borderRadius: 5,
+        marginLeft: -40,
+        borderRadius: 10,
+        bottom: -150,
+        borderWidth: 1,
+    },
+    logOutBtnText: {
+        fontFamily: 'GothamBold',
     },
     gothamBold: {
         fontFamily: 'GothamBold'
