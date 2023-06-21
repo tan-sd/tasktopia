@@ -3,33 +3,75 @@ import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { useFonts } from 'expo-font';
 import { auth } from "../firebase/firebase";
-// import { getFriends } from "../firebase/firebase";
-import {ref, onValue} from 'firebase/database';
+import {ref as ref_database, onValue} from 'firebase/database';
 import { database } from "../firebase/firebase";
+import { getStorage, ref as ref_storage, getDownloadURL } from '@firebase/storage';
+
 export default function FriendsPage({navigation}) {
     const [friends, setFriends] = React.useState(null);
+    const [profileP, setProfileP] = React.useState('');
+    const [convertedData, setConvertedData] = React.useState([]);
+    const storage = getStorage();
 
-    // React.useEffect(() => {
-    //     async function friendsObj() {
-    //         const allFriends = await getFriends();
-    //         console.log(allFriends);
-    //         setFriends(allFriends);
-    //     }
-    //     friendsObj();
-    // }, []);
-    // const [friends, setFriends] = useState([]);
+    var data = '';
 
-  const getFriends = () => {
-    const friendsRef = ref(database, 'users/');
+    const friendsRef = ref_database(database, 'users/');
     onValue(friendsRef, (snapshot) => {
-      const data = snapshot.val();
-      setFriends(data); // Update the state here
-    });
-  };
+      data = snapshot.val();
+    })
 
-  React.useEffect(() => {
-    getFriends();
-  }, []);
+    const convertImageURLs = async (data) => {
+        const convertedData = [];
+
+        for (const userId in data) {
+            const user = data[userId];
+            const { firstName, lastName, jobRole, profileImg } = user;
+
+            if (profileImg) {
+                try {
+                    const storage = getStorage();
+                    const storageRef = ref_storage(storage, profileImg);
+                    const url = await getDownloadURL(storageRef);
+
+                    const convertedUser = {
+                    userId,
+                    firstName,
+                    lastName,
+                    jobRole,
+                    profileImg: url,
+                    };
+
+                    convertedData.push(convertedUser);
+                } catch (error) {
+                    console.error('Error converting image URL:', error);
+                }
+            }
+        }
+    return convertedData;
+    };
+
+    const handleDataConversion = async () => {
+    try {
+        const convertedData = await convertImageURLs(data);
+        // Use the converted data in your React Native component or perform further operations
+        console.log(convertedData);
+    } catch (error) {
+        console.error('Error converting image URLs:', error);
+    }
+    };
+
+    handleDataConversion();
+
+    React.useEffect(() => {
+        const fetchDataAndConvertImages = async () => {
+
+        const convertedData = await convertImageURLs(data);
+        
+        setConvertedData(convertedData);
+        };
+        
+        fetchDataAndConvertImages();
+    }, []);
         
     const [loaded] = useFonts({
         GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
@@ -39,8 +81,6 @@ export default function FriendsPage({navigation}) {
       if (!loaded) {
         return null;
       }
-
-
 
     return (
         <>
@@ -55,88 +95,33 @@ export default function FriendsPage({navigation}) {
                 </View>
 
                 <View>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 30, marginTop: 50, marginLeft: -40}}>
-               
-                        <View style={styles.friendDetailsWrapper}>
-                            { friends ? (Object.keys(friends).map((uid) =>{
-                                const friend = friends[uid]
-                                return( 
-                                <>
-                                <View>
-                                <Image
-                                source={require('../assets/favicon.png')}
+                    { convertedData ? convertedData.map((item) => {
+                        return( 
+                            <>
+                            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 30, marginTop: 50, marginLeft: -40}}>
+                            <View>
+                            <Image
+                                source={{uri: item.profileImg}}
                                 style={styles.friendsImg}
-                                />
-                                </View>
+                            />
+                            </View>
 
-                                <View style={{flexDirection:'right'}}>
-                                <Text style={[styles.friendName, styles.gothamBold]}>{friend.firstName} {friend.lastName}</Text>
-                                 <Text style={[styles.friendJobRole, styles.gothamBook]}>{friend.jobRole}</Text>
-                                 <TouchableOpacity style={styles.visitButton}>
-                                     <Text style={{...styles.gothamBook, textAlign: 'center'}}>Visit</Text>
-                                 </TouchableOpacity>
-                                </View>
-                                </>
-                                )
-                            } )) : (
-                                <Text>Loading...</Text>
+                            <View style={styles.friendDetailsWrapper}>
+                                <Text style={[styles.friendName, styles.gothamBold]}>{item.firstName} {item.lastName}</Text>
+                                <Text style={[styles.friendJobRole, styles.gothamBook]}>{item.jobRole}</Text>
+                                <TouchableOpacity style={styles.visitButton}>
+                                    <Text style={{...styles.gothamBook, textAlign: 'center'}}>Visit</Text>
+                                </TouchableOpacity>
+                            </View>
+                            </View>
+                            </>
                             )
-                        }
-                        </View>
-                    </View>
-
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 30, marginTop: 50, marginLeft: -40}}>
-                        <View>
-                            {/*TODO: Convert o component with props*/}
-                            <Image
-                                source={require('../assets/favicon.png')}
-                                style={styles.friendsImg}
-                            />
-                        </View>
-                        <View style={styles.friendDetailsWrapper}>
-                            <Text style={[styles.friendName, styles.gothamBold]}>Friend Name 2</Text>
-                            <Text style={[styles.friendJobRole, styles.gothamBook]}>Friend Job 2</Text>
-                            <TouchableOpacity style={styles.visitButton}>
-                                <Text style={{...styles.gothamBook, textAlign: 'center'}}>Visit</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 30, marginTop: 50, marginLeft: -40}}>
-                        <View>
-                            {/*TODO: Convert o component with props*/}
-                            <Image
-                                source={require('../assets/favicon.png')}
-                                style={styles.friendsImg}
-                            />
-                        </View>
-                        <View style={styles.friendDetailsWrapper}>
-                            <Text style={[styles.friendName, styles.gothamBold]}>Friend Name 3</Text>
-                            <Text style={[styles.friendJobRole, styles.gothamBook]}>Friend Job 3</Text>
-                            <TouchableOpacity style={styles.visitButton}>
-                                <Text style={{...styles.gothamBook, textAlign: 'center'}}>Visit</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-
-                    <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 30, marginTop: 50, marginLeft: -40}}>
-                        <View>
-                            {/*TODO: Convert o component with props*/}
-                            <Image
-                                source={require('../assets/favicon.png')}
-                                style={styles.friendsImg}
-                            />
-                        </View>
-                        <View style={styles.friendDetailsWrapper}>
-                            <Text style={[styles.friendName, styles.gothamBold]}>Friend Name 4</Text>
-                            <Text style={[styles.friendJobRole, styles.gothamBook]}>Friend Job 4</Text>
-                            <TouchableOpacity style={styles.visitButton}>
-                                <Text style={{...styles.gothamBook, textAlign: 'center'}}>Visit</Text>
-                            </TouchableOpacity>
-                        </View>
+                        } ) : (
+                        <Text>Loading...</Text>
+                        )
+                    }
                     </View>
                 </View>
-            </View>
             </ScrollView>
         </SafeAreaView>
         </>
