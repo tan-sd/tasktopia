@@ -84,7 +84,7 @@ export default function HomePage({navigation}) {
 
     const [OrbitControls, events] = useControls();
     // Start of Task Accordion
-    const [accordionOpen, setAccordionOpen] = useState(false);
+    const [accordionOpen, setAccordionOpen] = useState(true);
     const [selectedTask, setSelectedTask] = useState([]);
     const [tasks, setTasks] = useState([
       { id: 1, title: 'Sports League - Ultimate', checked: false, project: 'Event', dueDate: '2023-06-30'},
