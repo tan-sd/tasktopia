@@ -7,7 +7,11 @@ import { ref as ref_database, getDatabase, onValue, off } from 'firebase/databas
 import { useState } from 'react';
 import { getStorage, ref as ref_storage, getDownloadURL } from "firebase/storage";
 import { signOutUser } from '../firebase/firebase';
-import Icon from 'react-native-vector-icons/Feather'
+import Icon1 from 'react-native-vector-icons/Feather'
+import Icon2 from 'react-native-vector-icons/AntDesign'
+import Icon3 from 'react-native-vector-icons/Entypo'
+import Icon4 from 'react-native-vector-icons/FontAwesome'
+import Icon5 from 'react-native-vector-icons/FontAwesome5'
 
 export default function ProfilePage({navigation}) {
     const [dbPet, setDbPet] = useState('');
@@ -104,29 +108,72 @@ export default function ProfilePage({navigation}) {
                 <View style={styles.achievementsWrapper}>
                     <Text style={[styles.gothamBold, styles.achievementsHeader]}>Achievements</Text>
 
-                    <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', marginTop: 20}}>
-                        <Text style={[styles.achievement, styles.gothamBook]}>
-                            Achievement 1
-                        </Text>
-                        <Text style={[styles.achievement, styles.gothamBook]}>
-                            Achievement 2
-                        </Text>
-                        <Text style={[styles.achievement, styles.gothamBook]}>
-                            Achievement 3
-                        </Text>
-                        <Text style={[styles.achievement, styles.gothamBook]}>
-                            Achievement 4
-                        </Text>
-                        <Text style={[styles.achievement, styles.gothamBook]}>
-                            Achievement 5
-                        </Text>
+                    <View style={styles.achievementButtonContainer}>
+                        {/* Badge 1 */}
+                        <TouchableOpacity style={styles.button}>
+                        <View style={styles.buttonContent}>
+                        <Icon3 name="flash" size={18} color="black" style={styles.icon}/>
+                            <Text style={styles.buttonText}>Efficiency Guru</Text>
+                        </View>
+                        </TouchableOpacity>
+                        {/* Badge 2 */}
+                        <TouchableOpacity style={styles.button}>
+                        <View style={styles.buttonContent}>
+                        <Icon5 name="glass-cheers" size={18} color="black" style={styles.icon}/>
+                            <Text style={styles.buttonText}>Customer Delight</Text>
+                        </View>
+                        </TouchableOpacity>
+                        {/* Badge 3 */}
+                        <TouchableOpacity style={styles.button}>
+                        <View style={styles.buttonContent}>
+                        <Icon5 name="globe-asia" size={18} color="black" style={styles.icon}/>
+                            <Text style={styles.buttonText}>Global Explorer</Text>
+                        </View>
+                        </TouchableOpacity>
+                        {/* Badge 4 */}
+                        <TouchableOpacity style={styles.button}>
+                        <View style={styles.buttonContent}>
+                        <Icon4 name="handshake-o" size={18} color="black" style={styles.icon}/>
+                            <Text style={styles.buttonText}>Partnership Pro</Text>
+                        </View>
+                        </TouchableOpacity>
+                        {/* Badge 5 */}
+                        <TouchableOpacity style={styles.button}>
+                        <View style={styles.buttonContent}>
+                        <Icon2 name="rocket1" size={18} color="black" style={styles.icon}/>
+                            <Text style={styles.buttonText}>Revenue Rockstar</Text>
+                        </View>
+                        </TouchableOpacity>
                     </View>
+                    
+                    {/* <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', marginTop: 20}}>
+                        <Text style={[styles.achievement, styles.gothamBook]}>
+                            <Icon3 name="flash" size={18} color="black" style={styles.icon}/>
+                            Efficiency Guru
+                        </Text>
+                        <Text style={[styles.achievement, styles.gothamBook]}>
+                            <Icon5 name="glass-cheers" size={18} color="black" style={styles.icon}/>
+                            Customer Delight
+                        </Text>
+                        <Text style={[styles.achievement, styles.gothamBook]}>
+                            <Icon5 name="globe-asia" size={18} color="black" style={styles.icon}/>
+                            Global Explorer
+                        </Text>
+                        <Text style={[styles.achievement, styles.gothamBook]}>
+                            <Icon4 name="handshake-o" size={18} color="black" style={styles.icon}/>
+                            Partnership Pro
+                        </Text>
+                        <Text style={[styles.achievement, styles.gothamBook]}>
+                        <Icon2 name="rocket1" size={18} color="black" style={styles.icon}/>
+                            Revenue Rockstar
+                        </Text>
+                    </View> */}
                 </View>
 
                 <View>
                 <View style={styles.logOutBtnContainer}>
                     <TouchableOpacity onPress={handleSignOut} style={{flexDirection: 'row', gap: 10}}>
-                        <Icon name="log-out" size={18} color="black" />
+                        <Icon1 name="log-out" size={18} color="black" />
                         <Text style={styles.logOutBtnText}>Log out</Text>
                     </TouchableOpacity>
                 </View>
@@ -143,7 +190,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fedb7d',
     },
     profileWrapper: {
-        marginLeft: 40,
+        // marginLeft: 40,
+        marginHorizontal: 30,
         marginTop: 15
     },
     profileHeader: {
@@ -168,7 +216,8 @@ const styles = StyleSheet.create({
         fontSize: 14
     },
     achievementsWrapper: {
-        marginTop: 75
+        marginTop: 70,
+        marginBottom: 0,
     },
     achievementsHeader: {
         fontSize: 29,
@@ -201,5 +250,32 @@ const styles = StyleSheet.create({
     },
     gothamBook: {
         fontFamily: 'GothamBook'
-    }
+    },
+    achievementButtonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        flexWrap: 'wrap',
+        marginTop: 20,
+    },
+    button: {
+        backgroundColor: '#FFF5DB',
+        borderRadius: 10,
+        paddingVertical: 10,
+        marginVertical: 10,
+        width: '48%',
+        borderWidth: 1,
+    },
+    buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'left',
+        justifyContent: 'left',
+    },
+    buttonText: {
+        marginLeft: 10,
+    },
+    icon: {
+        marginLeft: 15,
+        color: '#EF524A',
+    },
+
 })
