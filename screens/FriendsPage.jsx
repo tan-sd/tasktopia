@@ -38,8 +38,12 @@ export default function FriendsPage({navigation}) {
     
       const convertAndSetData = async (data) => {
         const convertedData = [];
+
+        const currentUser = auth.currentUser;
+        const currentUserId = currentUser.uid;
     
         for (const userId in data) {
+            if(userId !== currentUserId) {
           const user = data[userId];
           const { selectedPet, firstName, lastName, jobRole, profileImg } = user;
     
@@ -63,6 +67,7 @@ export default function FriendsPage({navigation}) {
             }
           }
         }
+    }
     
         setConvertedData(convertedData);
       };
