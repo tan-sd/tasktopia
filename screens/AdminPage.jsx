@@ -1,19 +1,32 @@
+import React from 'react';
 import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import * as React from 'react';
 import { useFonts } from 'expo-font';
-import { auth } from "../firebase/firebase";
 import {ref as ref_database, onValue} from 'firebase/database';
 import { database } from "../firebase/firebase";
 import { getStorage, ref as ref_storage, getDownloadURL } from '@firebase/storage';
 
-export default function FriendsPage({navigation}) {
-    const [friends, setFriends] = React.useState(null);
-    const [profileP, setProfileP] = React.useState('');
-    const [convertedData, setConvertedData] = React.useState([]);
-    const storage = getStorage();
+export default function AdminPage(){
 
-    var data = '';
+    const [loaded] = useFonts({
+        GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
+        GothamBook: require('../assets/fonts/Gotham-Book.otf')
+      });
+
+
+
+      const [worker, setWorker] = React.useState('');
+      const [task, setTask] = React.useState('');
+      const [isChecked, setIsChecked] = React.useState(false);
+      
+    //   get friends data with image
+      const [friends, setFriends] = React.useState(null);
+      const [profileP, setProfileP] = React.useState('');
+      const [convertedData, setConvertedData] = React.useState([]);
+      const storage = getStorage();
+
+
+      var data = '';
     const friendsRef = ref_database(database, 'users/');
 
     React.useEffect(()=>{
@@ -77,29 +90,38 @@ export default function FriendsPage({navigation}) {
         
         fetchDataAndConvertImages();
     }, []);
-        
-    const [loaded] = useFonts({
-        GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
-        GothamBook: require('../assets/fonts/Gotham-Book.otf')
-      });
 
+    //   const setWorkerName = (text) => {
+    //     setWorker(text);
+    //   };
+    
+    //   const handleInputChange2 = (text) => {
+    //     setTask(text);
+    //   };
+    
+    //   const handleCheckBoxChange = () => {
+    //     setIsChecked(!isChecked);
+    //   };
+    
+    //   const handleButtonPress = () => {
+    //     // Handle button press logic
+    //   };
+    
       if (!loaded) {
         return null;
       }
-
-    return (
+    return(
         <>
         <SafeAreaView style={styles.container}>
             <ScrollView>
             <StatusBar/>
-            <View style={styles.friendsWrapper}>
+            <View style={styles.adminWrapper}>
                 <View>
-                    <Text
-                        style={[styles.friendsHeader, styles.gothamBold]}
-                    >My Friends</Text>
+                    <Text style={styles.adminHeader}>Admin</Text>
                 </View>
+            </View>
 
-                <View>
+            <View>
                     { convertedData ? convertedData.map((item) => {
                         return( 
                             <>
@@ -115,7 +137,7 @@ export default function FriendsPage({navigation}) {
                                 <Text style={[styles.friendName, styles.gothamBold]}>{item.firstName} {item.lastName}</Text>
                                 <Text style={[styles.friendJobRole, styles.gothamBook]}>{item.jobRole}</Text>
                                 <TouchableOpacity style={styles.visitButton}>
-                                    <Text style={{...styles.gothamBook, textAlign: 'center'}}>Visit</Text>
+                                    <Text style={{...styles.gothamBook, textAlign: 'center'}}>Manage User Tasks</Text>
                                 </TouchableOpacity>
                             </View>
                             </View>
@@ -126,7 +148,8 @@ export default function FriendsPage({navigation}) {
                         )
                     }
                     </View>
-                </View>
+
+   
             </ScrollView>
         </SafeAreaView>
         </>
@@ -137,6 +160,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fedb7d',
+    },
+    adminHeader:{
+        fontSize: 35,
+    },
+    adminWrapper: {
+        marginLeft: 40,
+        marginTop: 15
+    },
+    gothamBold: {
+        fontFamily: 'GothamBold'
+    },
+    gothamBook: {
+        fontFamily: 'GothamBook'
     },
     friendsWrapper: {
         marginLeft: 40,
@@ -170,11 +206,5 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         width: 175,
         marginTop: 15
-    },
-    gothamBold: {
-        fontFamily: 'GothamBold'
-    },
-    gothamBook: {
-        fontFamily: 'GothamBook'
     }
 })

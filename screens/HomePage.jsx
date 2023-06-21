@@ -225,6 +225,7 @@ export default function HomePage({navigation}) {
                 </View>
                 <Text style={styles.accordionLabel}>Tasks</Text>
               </TouchableOpacity>
+              
             {/* Accordion Content */}
               {accordionOpen && (
               <View contentContainerStyle={styles.taskContentContainer}>
