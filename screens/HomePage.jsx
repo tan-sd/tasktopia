@@ -395,6 +395,48 @@ export default function HomePage({navigation}) {
             </TouchableOpacity>
           </View>
 
+           {/* <View style={styles.horizontalLine} /> */}
+
+
+          {/* Add Tasks Button */}
+          <View style={styles.addTaskButtonContainer}>
+            <TouchableOpacity style={styles.addTaskButton} onPress={toggleModal}>
+              <Icon name="plus" size={18} color="#FF8577" />
+              <Text marginLeft={4} >Add Task</Text> 
+            </TouchableOpacity>
+          </View>
+                      {/* Add Task Modal */}
+            <Modal2 isVisible={isModalVisible}>
+              <View style={styles.modalContainer1}>
+                <Text style={styles.modalTitle}>Add Task</Text>
+                <TextInput
+                  style={[styles.input, { color: 'black' }]} // Change text color here
+                  placeholder="Task Title" // Change placeholder text here
+                  placeholderTextColor="black" // Change placeholder text color here
+                  value={taskTitle}
+                  onChangeText={setTaskTitle}
+                />
+                <TextInput
+                  style={[styles.input, { color: 'black'}]}
+                  placeholder="Project Name"
+                  value={projectName}
+                  placeholderTextColor="black"
+                  onChangeText={setProjectName}
+                />
+                <TextInput
+                  style={[styles.input, { color: 'black'}]}
+                  placeholder="Due Date"
+                  value={dueDate}
+                  placeholderTextColor="black"
+                  onChangeText={setDueDate}
+                />
+                <View style={styles.modalButtonContainer}>
+                  <Button title="Send for Approval" onPress={handleAddTask} style={styles.approvalButton}/>
+                  <Button title="Close" onPress={toggleModal} style={styles.CloseButton} />
+                </View>
+              </View>
+            </Modal2>
+
           <View style={styles.accordionContainer}>
             {/* Accordion */}
               <TouchableOpacity style={styles.accordionButton} onPress={handleAccordionToggle}>
@@ -874,7 +916,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     padding: 10,
     backgroundColor: '#FF8577',
-    color: 'white',
+    // color: 'black',
     width: '100%',
     borderRadius: 10,
   },
