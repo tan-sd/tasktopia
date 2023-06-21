@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, ScrollView, Modal, Pressable } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { auth } from '../firebase/firebase';
@@ -8,6 +8,8 @@ import { useState } from 'react';
 
 export default function RewardsPage({navigation}) {
     const [dbPet, setDbPet] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
+    const [buttonColor, setButtonColor] = useState('')
 
     React.useEffect(() => {
         const fetchDbPet = async () => {
@@ -72,12 +74,33 @@ export default function RewardsPage({navigation}) {
                             <Text style={{...styles.gothamBold, fontSize: 12}}>Tier 1</Text>
                             <Text style={{...styles.gothamBook, marginTop: 5}}>Starbucks $10 Voucher</Text>
                         </View>
+               
                         <View>
-                            <TouchableOpacity style={styles.claimButton}>
-                                <Text style={{...styles.gothamBold, fontSize: 10}}>
+                        <Modal 
+                            animationType="slide"
+                            transparent={true}
+                            visible={modalVisible}
+                            onRequestClose={() => {
+                            Alert.alert('Reward is successfully claimed.');
+                            setModalVisible(!modalVisible);
+                            }}>
+                            <View style={styles.centeredView}>
+                            <View style={styles.modalView}>
+                                <Text style={styles.modalText}>A Starbucks $10 voucher has successfully been claimed.</Text>
+                                <Pressable
+                                style={[styles.button, styles.buttonClose]}
+                                onPress={() => setModalVisible(!modalVisible)}>
+                                <Text style={styles.textStyle}>Close</Text>
+                                </Pressable>
+                            </View>
+                            </View>
+                        </Modal>
+            
+                        <TouchableOpacity style={styles.claimButton}>
+                                <Text style={{...styles.gothamBold, fontSize: 10}} onPress={() => setModalVisible(true)}>
                                     Claim
                                 </Text>
-                            </TouchableOpacity>
+                        </TouchableOpacity>
                         </View>
                     </View>
 
@@ -214,12 +237,50 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 20,
         right: 0,
-        backgroundColor: '#10a958'
+        // backgroundColor: '#10a958'
     },
     gothamBold: {
         fontFamily: 'GothamBold'
     },
     gothamBook: {
         fontFamily: 'GothamBook'
-    }
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+      },
+      centeredView: {
+        flex: 1,
+      },
+      button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+      },
+      buttonOpen: {
+        backgroundColor: '#F194FF',
+      },
+      buttonClose: {
+        backgroundColor: '#2196F3',
+      },
+      textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+      },
+      modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+      },
 })
