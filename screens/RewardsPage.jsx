@@ -10,8 +10,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 export default function RewardsPage({navigation}) {
     const [dbPet, setDbPet] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
-    const [buttonColor, setButtonColor] = useState('')
-    const [buttonClicked, setButtonClicked] = useState(false)
+    const [buttonColor, setButtonColor] = useState('');
+    const [buttonClicked, setButtonClicked] = useState(false);
 
     const handleClick = () => {
         setButtonColor('grey')
@@ -111,7 +111,7 @@ export default function RewardsPage({navigation}) {
                             }}>
                             <View style={styles.centeredView}>
                             <View style={styles.modalView}>
-                                <Text style={styles.modalText}>A Starbucks $10 voucher has successfully been claimed.</Text>
+                                <Text style={styles.modalText}>Congratulations! {"\n"}Your reward has been successfully claimed.{"\n"}An email notification will be sent to you.</Text>
                                 <Pressable
                                 style={[styles.button, styles.buttonClose]}
                                 onPress={() => setModalVisible(!modalVisible)}>
@@ -294,6 +294,9 @@ const styles = StyleSheet.create({
       },
       centeredView: {
         flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
       },
       button: {
         borderRadius: 20,
