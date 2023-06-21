@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { LogBox } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -8,8 +8,10 @@ import HomePage from './screens/HomePage';
 import RewardsPage from './screens/RewardsPage';
 import ProfilePage from './screens/ProfilePage';
 import FriendsPage from './screens/FriendsPage';
-import { LogBox } from 'react-native';
+import FriendHomePage from './components/FriendHomePage';
 import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
+
+LogBox.ignoreAllLogs();
 
 LogBox.ignoreLogs(
   ['Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives: https://threejs.org/docs/index.html#manual/en/introduction/Installation']
@@ -85,6 +87,12 @@ export default function App() {
         <Stack.Screen
           name="HomePage"
           component={Home}
+          options={{ headerShown: false }}
+          />
+
+        <Stack.Screen
+          name="FriendHomePage"
+          component={FriendHomePage}
           options={{ headerShown: false }}
           />
       </Stack.Navigator>
