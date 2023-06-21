@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, Dimensions, ScrollView, Easing, Animated} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber/native';
@@ -12,8 +12,49 @@ import InkFishModel from '../components/InkFishModel';
 import { signOutUser } from '../firebase/firebase';
 import { auth } from '../firebase/firebase';
 import { ref, getDatabase, onValue, off } from 'firebase/database';
-import ProgressBar from 'react-native-progress/Bar'
-import Icon from 'react-native-vector-icons/FontAwesome'
+import ProgressBar from 'react-native-progress/Bar';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+const useHeartsAnimation = () => {
+  const [hearts, setHearts] = useState([]);
+
+  const addHeart = () => {
+    const newHeart = {
+      id: Date.now(),
+      position: new Animated.Value(0),
+      opacity: new Animated.Value(1),
+      size: new Animated.Value(0),
+    };
+
+    setHearts([...hearts, newHeart]);
+
+    Animated.parallel([
+      Animated.timing(newHeart.position, {
+        toValue: -200,
+        duration: 800,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+      Animated.timing(newHeart.opacity, {
+        toValue: 0,
+        duration: 800,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+      Animated.timing(newHeart.size, {
+        toValue: 1,
+        duration: 800,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setHearts(hearts.filter((heart) => heart.id !== newHeart.id));
+    });
+  };
+
+  return [hearts, addHeart];
+};
+
 
 export default function HomePage({navigation}) {
     const [dbPet, setDbPet] = useState('');
@@ -88,6 +129,62 @@ export default function HomePage({navigation}) {
 
       }
     }
+
+    const handleEventSelection = (eventId) => {
+      const updatedEvents = allEvents.map((event) => {
+        if (event.id === eventId) {
+          return { ...event, checked: !event.checked };
+        }
+        return event;
+      });
+      setSelectedEvent(updatedEvents.filter((event) => event.checked).map((event) => event.id));
+      setAllEvents(updatedEvents);
+
+      if (updatedEvents.find((event) => event.id === eventId).checked) {
+        setLeftProgress((prevProgress) => prevProgress + 0.1);
+
+        setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds + 1);
+
+      }else {
+        setLeftProgress((prevProgress) => prevProgress - 0.1);
+        if (feedRemaining > 0){
+          setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds - 1);
+        }
+
+      }
+    };
+
+    // Modal 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [taskTitle, setTaskTitle] = useState('');
+    const [projectName, setProjectName] = useState('');
+    const [dueDate, setDueDate] = useState('');
+
+    const toggleModal = () => {
+      setIsModalVisible(!isModalVisible);
+    };
+
+    const handleAddTask = () => {
+      // Perform validation and add the task to the tasks state
+      if (taskTitle && projectName && dueDate) {
+        const newTask = {
+          id: tasks.length + 1,
+          title: taskTitle,
+          checked: false,
+          project: projectName,
+          dueDate: dueDate,
+        };
+    
+        // setTasks([...tasks, newTask]);
+        setTaskTitle('');
+        setProjectName('');
+        setDueDate('');
+        toggleModal();
+      }
+    };
+    
+    
+
     
     const [feedRemaining, setFeedRemaining] = useState(4);
     const [rightProgress, setRightProgress] = useState(0.3);
@@ -217,6 +314,57 @@ export default function HomePage({navigation}) {
             </TouchableOpacity>
           </View>
 
+          {/* <View style={styles.horizontalLine} /> */}
+
+
+          {/* Add Tasks Button */}
+          <View style={styles.addTaskButtonContainer}>
+            <TouchableOpacity style={styles.addTaskButton} onPress={toggleModal}>
+              <Icon name="plus" size={18} color="#FF8577" />
+              <Text marginLeft={4} >Add Task</Text> 
+            </TouchableOpacity>
+          </View>
+
+          {/* Add Task Modal */}
+          <Modal isVisible={isModalVisible}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>Add Task</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Task Title"
+                value={taskTitle}
+                onChangeText={setTaskTitle}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Project Name"
+                value={projectName}
+                onChangeText={setProjectName}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Due Date"
+                value={dueDate}
+                onChangeText={setDueDate}
+              />
+              <View style={styles.modalButtonContainer}>
+                <Button title="Send for Approval" onPress={handleAddTask} />
+                <Button title="Close" onPress={toggleModal} />
+              </View>
+            </View>
+          </Modal>
+
+
+          
+          {/* Join Event Button */}
+          {/* <View style={styles.joinEventButtonContainer}>
+            <TouchableOpacity style={styles.joinEventButton}>
+              <Icon name="plus" size={18} color="#FF8577" />
+              <Text marginLeft={4}>Join Event</Text>
+            </TouchableOpacity>
+          </View> */}
+
+          {/* Task Accordion */}
           <View style={styles.accordionContainer}>
             {/* Accordion */}
               <TouchableOpacity style={styles.accordionButton} onPress={handleAccordionToggle}>
@@ -445,5 +593,118 @@ const styles = StyleSheet.create({
   taskContentContainer: {
     paddingBottom: 150, // Add some padding to the bottom to ensure scrolling space
     height: 200,
+  },
+  horizontalLine: {
+    borderBottomColor: 'black',
+    borderWidth: 0.5,
+    width: '100%', 
+    bottom: '38%',
+  },  
+  addTaskButtonContainer: {
+    width: '100%',
+    alignItems: 'left',
+    // justifyContent: 'center',
+    position: 'absolute',
+    bottom: '33%', 
+    paddingLeft: 20,
+    zIndex: 2,
+  },
+  addTaskButton:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 5,
+    zIndex: 3,
+    // color: '#FFC700',
+    // margin: 5,
+  },
+  joinEventButtonContainer: {
+    width: '100%',
+    alignItems: 'left',
+    // justifyContent: 'center',
+    position: 'absolute',
+    bottom: '33%', 
+    paddingLeft: 120,
+  },
+  joinEventButton:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 5,
+  },
+  eventAccordionContainer: {
+    top: '85%',
+    // marginTop: 10,
+    // marginBottom: 10,
+    // borderWidth: 1,
+    width:Dimensions.get('window').width * 0.9,
+    position: 'absolute',
+    zIndex: 1,
+    maxHeight: 200,
+  },
+  eventAccordionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderWidth: 1,
+  }, 
+  eventContentContainer: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: '#FFF5DB',
+    overflow: 'hidden',
+  },
+  eventCheckBox: {
+  },
+  eventContent:{
+    flex: 1,
+    marginLeft: 10,
+  },
+  eventBadges: {
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  heart: {
+    position: 'absolute',
+    bottom: '50%', // Start from the middle of the screen
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  heartIcon: {
+    fontSize: 30,
+    color: 'red',
+  },
+  modalContainer: {
+    width: '90%',
+    backgroundColor: 'white',
+    borderRadius: 20,
+    margin: 20,
+    padding:35, 
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: { 
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    borderWidth: 0.5,
+    fontSize: 20,
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor: '#FF8577',
+    color: 'white',
+    width: '100%',
+    borderRadius: 10,
   },
 })
