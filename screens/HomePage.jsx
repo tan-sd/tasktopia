@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, Dimensions, ScrollView, Easing, Animated} from 'react-native';
+import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, Dimensions, ScrollView, Easing, Animated } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber/native';
@@ -9,7 +9,6 @@ import useControls from 'r3f-native-orbitcontrols';
 import PuduModel from '../components/PuduModel';
 import SparrowModel from '../components/SparrowModel';
 import InkFishModel from '../components/InkFishModel';
-import { signOutUser } from '../firebase/firebase';
 import { auth } from '../firebase/firebase';
 import { ref, getDatabase, onValue, off } from 'firebase/database';
 import ProgressBar from 'react-native-progress/Bar';
@@ -58,15 +57,14 @@ const useHeartsAnimation = () => {
 
 export default function HomePage({navigation}) {
     const [dbPet, setDbPet] = useState('');
+    const inkFishAnimationRef = React.useRef('');
+    const [hearts, addHeart] = useHeartsAnimation();
 
-    const handleSignOut= () => {
-        signOutUser()
-        .then(() => {
-            navigation.replace('Login');
-        }).catch((error) => {
-            alert(error.message);
-        })
-    }
+    const handleActivateAnimation = () => {
+      if (inkFishAnimationRef.current && inkFishAnimationRef.current.activateAnimation) {
+        inkFishAnimationRef.current.activateAnimation();
+      }
+    };
 
     const glRef = useRef();
 
@@ -85,14 +83,17 @@ export default function HomePage({navigation}) {
     } 
 
     const [OrbitControls, events] = useControls();
-    const [accordionOpen, setAccordionOpen] = useState(false);
+    // Start of Task Accordion
+    const [accordionOpen, setAccordionOpen] = useState(true);
     const [selectedTask, setSelectedTask] = useState([]);
     const [tasks, setTasks] = useState([
-      { id: 1, title: 'Proposal 2.3', checked: false,  project: 'Project 1', dueDate: '2023-06-30' },
-      { id: 2, title: 'Pitch Deck', checked: false, project: 'Project 1', dueDate: '2023-06-30'  },
-      { id: 3, title: 'Edit Excel', checked: false, project: 'Project 1', dueDate: '2023-06-31'  },
-      { id: 4, title: 'Proposal Meeting', checked: false, project: 'Project 2', dueDate: '2023-07-02'  },
-      { id: 5, title: 'Proposal Draft 1.0', checked: false, project: 'Project 2', dueDate: '2023-07-03'  }
+      { id: 1, title: 'Sports League - Ultimate', checked: false, project: 'Event', dueDate: '2023-06-30'},
+      { id: 2, title: 'Proposal 2.3', checked: false,  project: 'Project 1', dueDate: '2023-06-30' },
+      { id: 3, title: 'Pitch Deck', checked: false, project: 'Project 1', dueDate: '2023-06-30'  },
+      { id: 4, title: 'Edit Excel', checked: false, project: 'Project 1', dueDate: '2023-06-31'  },
+      { id: 5, title: 'Proposal Meeting', checked: false, project: 'Project 2', dueDate: '2023-07-02'  },
+      { id: 6, title: 'Proposal Draft 1.0', checked: false, project: 'Project 2', dueDate: '2023-07-03'  },
+      { id: 7, title: 'Townhall Meeting', checked: false, project: 'Event', dueDate: '2023-07-03',},
     ]);
 
     const handleAccordionToggle = () => {
@@ -101,10 +102,25 @@ export default function HomePage({navigation}) {
       }
       setAccordionOpen(!accordionOpen);
     };
+    // End of Task Accordion
+
+    // Start of Events Accordion
+    const [eventsAccordionOpen, setEventsAccordionOpen] = useState(false);
+    const [selectedEvent, setSelectedEvent] = useState([]);
+    const [allEvents, setAllEvents] = useState([
+      { id: 1, title: 'Sports League - Ultimate', checked: false, category: 'Sports', date: '2023-06-30',},
+      { id: 2, title: 'Townhall Meeting', checked: false, category: 'Work', date: '2023-07-03',},
+    ]);
+    const handleEventsAccordionToggle = () => {
+      if (!eventsAccordionOpen) {
+        setSelectedEvent([]);
+
+      }
+      setEventsAccordionOpen(!eventsAccordionOpen);
+    };
+    // End of Events Accordion
 
     const [leftProgress, setLeftProgress] = useState(0);
-    
-    
     const handleTaskSelection = (taskId) => {
       const updatedTasks = tasks.map((task) => {
         if (task.id === taskId) {
@@ -129,62 +145,6 @@ export default function HomePage({navigation}) {
 
       }
     }
-
-    const handleEventSelection = (eventId) => {
-      const updatedEvents = allEvents.map((event) => {
-        if (event.id === eventId) {
-          return { ...event, checked: !event.checked };
-        }
-        return event;
-      });
-      setSelectedEvent(updatedEvents.filter((event) => event.checked).map((event) => event.id));
-      setAllEvents(updatedEvents);
-
-      if (updatedEvents.find((event) => event.id === eventId).checked) {
-        setLeftProgress((prevProgress) => prevProgress + 0.1);
-
-        setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds + 1);
-
-      }else {
-        setLeftProgress((prevProgress) => prevProgress - 0.1);
-        if (feedRemaining > 0){
-          setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds - 1);
-        }
-
-      }
-    };
-
-    // Modal 
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [taskTitle, setTaskTitle] = useState('');
-    const [projectName, setProjectName] = useState('');
-    const [dueDate, setDueDate] = useState('');
-
-    const toggleModal = () => {
-      setIsModalVisible(!isModalVisible);
-    };
-
-    const handleAddTask = () => {
-      // Perform validation and add the task to the tasks state
-      if (taskTitle && projectName && dueDate) {
-        const newTask = {
-          id: tasks.length + 1,
-          title: taskTitle,
-          checked: false,
-          project: projectName,
-          dueDate: dueDate,
-        };
-    
-        // setTasks([...tasks, newTask]);
-        setTaskTitle('');
-        setProjectName('');
-        setDueDate('');
-        toggleModal();
-      }
-    };
-    
-    
-
     
     const [feedRemaining, setFeedRemaining] = useState(4);
     const [rightProgress, setRightProgress] = useState(0.3);
@@ -194,9 +154,13 @@ export default function HomePage({navigation}) {
 
         if (rightProgress < 1) {
         setRightProgress((prevProgress) => Math.round((prevProgress + 0.1)*10)/10);
-      }}
-    };
-    
+      }
+
+      if (inkFishAnimationRef.current && inkFishAnimationRef.current.activateAnimation) {
+        inkFishAnimationRef.current.activateAnimation();
+      }
+    }
+  };
 
     React.useEffect(() => {
         const fetchDbPet = async () => {
@@ -253,19 +217,13 @@ export default function HomePage({navigation}) {
                                 {/* <PuduModel /> */}
                                 {dbPet === 'pudu' && <PuduModel />}
                                 {dbPet === 'sparrow' && <SparrowModel />}
-                                {dbPet === 'inkfish' && <InkFishModel />}
+                                {dbPet === 'inkfish' && <InkFishModel animationRef={inkFishAnimationRef} />}
                             </Suspense>
                     </Canvas>
                 </View>
-                <View>
-                  <TouchableOpacity
-                    onPress={handleSignOut}
-                    >
-                    <Text>Log out</Text>
-                  </TouchableOpacity>
-                </View>
             </View>
 
+          {/* Progress Bars */}
             <View style={styles.progressContainer}>
             {/* Level Progress Bar */}
               <View style={[styles.progressBar, styles.leftProgressBar]}>
@@ -303,10 +261,32 @@ export default function HomePage({navigation}) {
               </View>
           </View>
 
+          {hearts.map((heart) => (
+        <Animated.View
+          key={heart.id}
+          style={[
+            styles.heart,
+            {
+              transform: [
+                { translateY: heart.position },
+                { scale: heart.size.interpolate({ inputRange: [0, 0.5, 1], outputRange: [0, 1.2, 1] }) },
+              ],
+              opacity: heart.opacity,
+            },
+          ]}
+        >
+          {/* Customize the heart shape or icon */}
+          <Text style={styles.heartIcon}>❤️</Text>
+        </Animated.View>
+      ))}
+
             {/* Feed Button */}
           <View style={styles.feedButtonContainer}>
             <Text style={styles.infoText}>Feed to add health</Text>
-            <TouchableOpacity style={styles.button}  onPress={handleFeedButtonPress}>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => { handleFeedButtonPress(); addHeart(); }}
+              disabled={feedRemaining === 0 || rightProgress === 1.0}>
               <View style={styles.buttonContent}>
                 <Icon name="heart" size={18} color="#FF8577" />
                 <Text style={styles.buttonText}>{feedRemaining} remaining</Text>
@@ -314,65 +294,15 @@ export default function HomePage({navigation}) {
             </TouchableOpacity>
           </View>
 
-          {/* <View style={styles.horizontalLine} /> */}
-
-
-          {/* Add Tasks Button */}
-          <View style={styles.addTaskButtonContainer}>
-            <TouchableOpacity style={styles.addTaskButton} onPress={toggleModal}>
-              <Icon name="plus" size={18} color="#FF8577" />
-              <Text marginLeft={4} >Add Task</Text> 
-            </TouchableOpacity>
-          </View>
-
-          {/* Add Task Modal */}
-          <Modal isVisible={isModalVisible}>
-            <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>Add Task</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Task Title"
-                value={taskTitle}
-                onChangeText={setTaskTitle}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Project Name"
-                value={projectName}
-                onChangeText={setProjectName}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Due Date"
-                value={dueDate}
-                onChangeText={setDueDate}
-              />
-              <View style={styles.modalButtonContainer}>
-                <Button title="Send for Approval" onPress={handleAddTask} />
-                <Button title="Close" onPress={toggleModal} />
-              </View>
-            </View>
-          </Modal>
-
-
-          
-          {/* Join Event Button */}
-          {/* <View style={styles.joinEventButtonContainer}>
-            <TouchableOpacity style={styles.joinEventButton}>
-              <Icon name="plus" size={18} color="#FF8577" />
-              <Text marginLeft={4}>Join Event</Text>
-            </TouchableOpacity>
-          </View> */}
-
-          {/* Task Accordion */}
           <View style={styles.accordionContainer}>
             {/* Accordion */}
               <TouchableOpacity style={styles.accordionButton} onPress={handleAccordionToggle}>
                 <View>
                   <Icon name="tasks" size={24} color="black" />
                 </View>
-                <Text style={styles.accordionLabel}>Tasks</Text>
+                <Text style={styles.accordionLabel}>Tasks & Events</Text>
               </TouchableOpacity>
+              
             {/* Accordion Content */}
               {accordionOpen && (
               <View contentContainerStyle={styles.taskContentContainer}>
@@ -402,9 +332,51 @@ export default function HomePage({navigation}) {
                 </ScrollView>
                 </View>
                 )}
-          
-
         </View>
+
+          {/* Event Accordion */}
+          {/* <View style={styles.eventAccordionContainer}> */}
+            {/* Accordion */}
+              {/* <TouchableOpacity style={styles.eventAccordionButton} onPress={handleEventsAccordionToggle}>
+                <View>
+                  <Icon name="calendar" size={24} color="black" />
+                </View>
+                <Text style={styles.eventAccordionLabel}>Events</Text>
+              </TouchableOpacity> */}
+            {/* Accordion Content */}
+              {/* {eventsAccordionOpen && (
+              <View contentContainerStyle={styles.eventContentContainer}>
+                <ScrollView>
+                {allEvents.map((event) => (
+                  <TouchableOpacity
+                    key={event.id}
+                    style={styles.eventItem}
+                    onPress={() => handleEventSelection(event.id)}
+                  >
+                      <View style={styles.eventCheckBox}>
+                        {event.checked ? (
+                          <Icon name="check-square-o" size={20} color="black" />
+                        ) : (
+                          <Icon name="square-o" size={20} color="black" />
+                        )}
+                      </View>
+                      <View style={styles.eventContent}>
+                        <Text style={styles.eventText}>{event.title}</Text>
+                        <View style={styles.eventBadges}>
+                          <Text style={styles.badgeCategory}>{event.category}</Text>
+                          <Text style={styles.badgeDate}>{event.date}</Text>
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+                </View>
+                )}
+        </View> */}
+
+
+
+
         </SafeAreaView>
         </>
     )
@@ -422,21 +394,21 @@ const styles = StyleSheet.create({
       width: '70%',
       height: '40%',
       borderRadius: 30,
-      top: 50
+      top: 63
   },
   canvas: {
       height: '56%',
       // aspectRatio: 1,
       borderColor: 'black',
       borderRadius: 30,
-      // borderWidth: 1,          
-  },
+      // borderWidth: 1,
+    },
   canvasWrapper: {
       width: 300,
-      height: '56%',
+      height: '40%',
       bottom: 0,
       position: 'absolute',
-      top:'10%',
+      top:'8%',
   },
   progressContainer: {
     position: 'absolute',
@@ -446,6 +418,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
     paddingHorizontal: 20,
+    marginTop: 12,
   },
   progressBar: {
     flexDirection: 'row',
@@ -489,7 +462,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    bottom: '40%', 
+    bottom: '41%', 
 
   },
   infoContainer: {
@@ -505,6 +478,7 @@ const styles = StyleSheet.create({
   button: {
     borderColor: 'black',
     backgroundColor: '#D9D9D9',
+    // backgroundColor: '#fff',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 14,
@@ -522,10 +496,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   accordionContainer: {
-    top: '70%',
+    top: '75%',
     // marginTop: 10,
     // marginBottom: 10,
-    borderWidth: 1,
+    // borderWidth: 1,
     width:Dimensions.get('window').width * 0.9,
     position: 'absolute',
     zIndex: 1,
@@ -535,8 +509,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
+    borderWidth: 1,
   },
   accordionLabel: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
+  eventAccordionLabel: {
     fontSize: 24,
     fontWeight: 'bold',
     marginLeft: 10,
@@ -553,6 +533,12 @@ const styles = StyleSheet.create({
     marginLeft: 5, 
     fontWeight: 'bold',
   },
+  eventText:{
+    fontSize: 16,
+    marginBottom: 5,
+    marginLeft: 5, 
+    fontWeight: 'bold',
+  },
   taskItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -562,7 +548,18 @@ const styles = StyleSheet.create({
     borderRadius: 5, 
     backgroundColor: '#FFF5DB', 
     padding: 5, 
-
+    marginTop: 2,
+  },
+  eventItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+    borderWidth: 1, 
+    borderColor: 'black', 
+    borderRadius: 5, 
+    backgroundColor: '#FFF5DB', 
+    padding: 5, 
+    marginTop: 2,
   },
   taskContent: {
     flex: 1,
@@ -573,6 +570,15 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   badgeProject: {
+    backgroundColor: '#699BF7',
+    color: 'white',
+    fontSize: 12,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    marginRight: 5,
+    borderRadius: 8,
+  },
+  badgeCategory:{
     backgroundColor: '#699BF7',
     color: 'white',
     fontSize: 12,
@@ -593,118 +599,5 @@ const styles = StyleSheet.create({
   taskContentContainer: {
     paddingBottom: 150, // Add some padding to the bottom to ensure scrolling space
     height: 200,
-  },
-  horizontalLine: {
-    borderBottomColor: 'black',
-    borderWidth: 0.5,
-    width: '100%', 
-    bottom: '38%',
-  },  
-  addTaskButtonContainer: {
-    width: '100%',
-    alignItems: 'left',
-    // justifyContent: 'center',
-    position: 'absolute',
-    bottom: '33%', 
-    paddingLeft: 20,
-    zIndex: 2,
-  },
-  addTaskButton:{
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 5,
-    zIndex: 3,
-    // color: '#FFC700',
-    // margin: 5,
-  },
-  joinEventButtonContainer: {
-    width: '100%',
-    alignItems: 'left',
-    // justifyContent: 'center',
-    position: 'absolute',
-    bottom: '33%', 
-    paddingLeft: 120,
-  },
-  joinEventButton:{
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 5,
-  },
-  eventAccordionContainer: {
-    top: '85%',
-    // marginTop: 10,
-    // marginBottom: 10,
-    // borderWidth: 1,
-    width:Dimensions.get('window').width * 0.9,
-    position: 'absolute',
-    zIndex: 1,
-    maxHeight: 200,
-  },
-  eventAccordionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    borderWidth: 1,
-  }, 
-  eventContentContainer: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#FFF5DB',
-    overflow: 'hidden',
-  },
-  eventCheckBox: {
-  },
-  eventContent:{
-    flex: 1,
-    marginLeft: 10,
-  },
-  eventBadges: {
-    flexDirection: 'row',
-    marginTop: 5,
-  },
-  heart: {
-    position: 'absolute',
-    bottom: '50%', // Start from the middle of the screen
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  heartIcon: {
-    fontSize: 30,
-    color: 'red',
-  },
-  modalContainer: {
-    width: '90%',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    margin: 20,
-    padding:35, 
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalTitle: { 
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-  input: {
-    borderWidth: 0.5,
-    fontSize: 20,
-    marginBottom: 10,
-    padding: 10,
-    backgroundColor: '#FF8577',
-    color: 'white',
-    width: '100%',
-    borderRadius: 10,
   },
 })
