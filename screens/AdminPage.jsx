@@ -152,7 +152,8 @@ const styles = StyleSheet.create({
     },
     friendJobRole: {
         marginTop: 5,
-        fontSize: 14
+        fontSize: 14,
+        width: 200
     },
     visitButton: {
         borderWidth: 1,
