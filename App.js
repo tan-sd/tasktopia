@@ -9,15 +9,11 @@ import RewardsPage from './screens/RewardsPage';
 import ProfilePage from './screens/ProfilePage';
 import FriendsPage from './screens/FriendsPage';
 import AdminPage from "./screens/AdminPage";
-import { LogBox } from 'react-native';
 import FriendHomePage from './components/FriendHomePage';
 import { MaterialIcons, AntDesign, FontAwesome5 } from '@expo/vector-icons';
-import { AuthContext, AuthContextProvider } from "./AuthContext";
 import React from 'react';
 import { auth } from './firebase/firebase';
 import { ref, getDatabase, onValue, off } from 'firebase/database';
-
-LogBox.ignoreAllLogs();
 
 LogBox.ignoreAllLogs();
 
