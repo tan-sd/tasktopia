@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, Dimensions, ScrollView, Easing, Animated } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, Dimensions, ScrollView, Easing, Animated, Modal } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber/native';
@@ -86,6 +86,8 @@ export default function HomePage({navigation}) {
     // Start of Task Accordion
     const [accordionOpen, setAccordionOpen] = useState(true);
     const [selectedTask, setSelectedTask] = useState([]);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [taskId, setTaskId] = useState('');
     const [tasks, setTasks] = useState([
       { id: 1, title: 'Sports League - Ultimate', checked: false, project: 'Event', dueDate: '2023-06-30'},
       { id: 2, title: 'Proposal 2.3', checked: false,  project: 'Project 1', dueDate: '2023-06-30' },
@@ -121,30 +123,75 @@ export default function HomePage({navigation}) {
     // End of Events Accordion
 
     const [leftProgress, setLeftProgress] = useState(0);
+
     const handleTaskSelection = (taskId) => {
-      const updatedTasks = tasks.map((task) => {
-        if (task.id === taskId) {
-          return { ...task, checked: !task.checked };
-        }
-        return task;
-      });
-      setSelectedTask(updatedTasks.filter((task) => task.checked).map((task) => task.id));
-      setTasks(updatedTasks);
+      // const updatedTasks = tasks.map((task) => {
+      //   if (task.id === taskId) {
+      //     return { ...task, checked: !task.checked };
+      //   }
+      //   return task;
+      // });
+
+      // setSelectedTask(updatedTasks.filter((task) => task.checked).map((task) => task.id));
+      // setTasks(updatedTasks);
+      // setModalVisible(true);
+
+      // Check if the task is already selected
+      const isTaskSelected = selectedTask.includes(taskId);
+
+      if (isTaskSelected) {
+        // Task is already selected, remove it from the selectedTask array
+        const updatedSelectedTask = selectedTask.filter((id) => id !== taskId);
+        setSelectedTask(updatedSelectedTask);
+      } else {
+        // Task is not selected, add it to the selectedTask array
+        setSelectedTask([...selectedTask, taskId]);
+      }
       
       //Increase level progress bar by 0.1
-      if (updatedTasks.find((task) => task.id === taskId).checked) {
+      // if (updatedTasks.find((task) => task.id === taskId).checked) {
+      //   setLeftProgress((prevProgress) => prevProgress + 0.1);
+
+      //   setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds + 1);
+
+      // }else {
+      //   setLeftProgress((prevProgress) => prevProgress - 0.1);
+      //   if (feedRemaining > 0){
+      //     setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds - 1);
+      //   }
+      // }
+        // Increase or decrease progress and feed counts based on task selection
+
+      //Increase level progress bar by 0.1
+      if (isTaskSelected) {
         setLeftProgress((prevProgress) => prevProgress + 0.1);
-
         setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds + 1);
-
-      }else {
+      } else {
         setLeftProgress((prevProgress) => prevProgress - 0.1);
-        if (feedRemaining > 0){
+        if (feedRemaining > 0) {
           setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds - 1);
         }
-
       }
+      setModalVisible(true);
     }
+
+    const handleModalConfirmation = (confirmed) => {
+      if (confirmed) {
+        // Update the tasks to set the checkbox as checked
+        const updatedTasks = tasks.map((task) => {
+          if (selectedTask.includes(task.id)) {
+            return { ...task, checked: true };
+          }
+          return task;
+        });
+        setTasks(updatedTasks);
+        // Update progress and feed counts based on task selection
+        setLeftProgress((prevProgress) => prevProgress + 0.1 * selectedTask.length);
+        setFeedRemaining((prevRemainingFeeds) => prevRemainingFeeds + selectedTask.length);
+      }
+      // Close the modal
+      setModalVisible(false);
+    };
 
     const handleEventSelection = (eventId) => {
       const updatedEvents = allEvents.map((event) => {
@@ -347,6 +394,34 @@ export default function HomePage({navigation}) {
                 </View>
                 <Text style={styles.accordionLabel}>Tasks & Events</Text>
               </TouchableOpacity>
+
+            {/* Modal */}
+            <Modal
+              visible={modalVisible}
+              animationType="fade"
+              transparent={true}
+              onRequestClose={() => handleModalConfirmation(false)}
+            >
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalText}>Confirm?</Text>
+                  <View style={styles.modalButtonContainer}>
+                    <TouchableOpacity
+                      style={styles.modalButton}
+                      onPress={() => handleModalConfirmation(true)}
+                    >
+                      <Text style={styles.modalButtonText}>Yes</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.modalButton}
+                      onPress={() => handleModalConfirmation(false)}
+                    >
+                      <Text style={styles.modalButtonText}>No</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
               
             {/* Accordion Content */}
               {accordionOpen && (
@@ -356,7 +431,12 @@ export default function HomePage({navigation}) {
                   <TouchableOpacity
                     key={task.id}
                     style={styles.taskItem}
-                    onPress={() => handleTaskSelection(task.id)}
+                    // onPress={() => { handleTaskSelection(task.id); }}
+                    onPress={() => {
+                      setModalVisible(true);
+                      setSelectedTask([task.id]);
+                    }}
+                    disabled={task.checked}
                   >
                       <View style={styles.taskCheckBox}>
                         {task.checked ? (
@@ -418,10 +498,6 @@ export default function HomePage({navigation}) {
                 </View>
                 )}
         </View> */}
-
-
-
-
         </SafeAreaView>
         </>
     )
@@ -615,6 +691,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   badgeProject: {
+    marginLeft: 7,
     backgroundColor: '#699BF7',
     color: 'white',
     fontSize: 12,
@@ -724,5 +801,39 @@ const styles = StyleSheet.create({
   heartIcon: {
     fontSize: 30,
     color: 'red',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background
+  },
+  modalContent: {
+    backgroundColor: '#fff', // White background
+    borderRadius: 10,
+    padding: 20,
+    width: 200,
+  },
+  modalText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center'
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  modalButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#007AFF', // Blue button background color
+    borderRadius: 5,
+  },
+  modalButtonText: {
+    color: '#fff', // White button text color
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 })
