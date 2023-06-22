@@ -14,6 +14,7 @@ import { ref, getDatabase, onValue, off } from 'firebase/database';
 import ProgressBar from 'react-native-progress/Bar';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal2 from 'react-native-modal';
+import { useFonts } from 'expo-font';
 
 const useHeartsAnimation = () => {
   const [hearts, setHearts] = useState([]);
@@ -281,6 +282,15 @@ export default function HomePage({navigation}) {
         fetchDbPet();
       }, []);
 
+      const [loaded] = useFonts({
+        GothamBold: require('../assets/fonts/Gotham-Bold.otf'),
+        GothamBook: require('../assets/fonts/Gotham-Book.otf')
+      });
+
+      if (!loaded) {
+        return null;
+      }
+
     return (
         <>
         <SafeAreaView style={styles.container}>
@@ -430,9 +440,18 @@ export default function HomePage({navigation}) {
                   placeholderTextColor="black"
                   onChangeText={setDueDate}
                 />
-                <View style={styles.modalButtonContainer}>
-                  <Button title="Send for Approval" onPress={handleAddTask} style={styles.approvalButton}/>
-                  <Button title="Close" onPress={toggleModal} style={styles.CloseButton} />
+                <View style={{...styles.modalButtonContainer, flexDirection: 'row', gap: 20}}>
+                  <TouchableOpacity onPress={handleAddTask} style={{borderWidth: 1, padding: 10, borderRadius: 10, backgroundColor: '#007AFF'}}>
+                    <Text style={{...styles.gothamBold, color: '#fff'}}>
+                      Send for Approval
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={toggleModal} style={{borderWidth: 1, padding: 10, borderRadius: 10, backgroundColor: '#007AFF'}}>
+                    <Text style={{...styles.gothamBold, color: '#fff'}}>
+                      Close
+                    </Text>
+
+                  </TouchableOpacity>
                 </View>
               </View>
             </Modal2>
@@ -920,4 +939,10 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 10,
   },
+  gothamBold: {
+    fontFamily: 'GothamBold'
+},
+gothamBook: {
+    fontFamily: 'GothamBook'
+}
 })

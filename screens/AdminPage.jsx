@@ -85,7 +85,7 @@ export default function workersPage({navigation}) {
                 <View>
                     <Text
                         style={[styles.workersHeader, styles.gothamBold]}
-                    >My workers</Text>
+                    >Team</Text>
                 </View>
 
                 <View>

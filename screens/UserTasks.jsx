@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, TouchableOpacity, TextInput, SafeAreaView, Dimensions, ScrollView, Keyboard,TouchableWithoutFeedback } from 'react-native';
 // import * as React from 'react';
 import { Suspense, useRef, useLayoutEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
@@ -18,7 +18,7 @@ const UserTasks = ({route}) =>{
         navigation.goBack();
       };  
     
-    const [accordionOpen, setAccordionOpen] = useState(false);
+    const [accordionOpen, setAccordionOpen] = useState(true);
     const [selectedTask, setSelectedTask] = useState([]);
     const [appTasks, setAppTasks] = useState([
         { id: 1, title: 'Pitch Deck for Client', checked: false, project: 'Project 2A', dueDate: '2023-07-02'  },
@@ -59,6 +59,7 @@ const UserTasks = ({route}) =>{
         const handleSubmit = () => {
             // Handle the submit action
             console.log('Submitted:', giveTask);
+            setNewTask('');
             // You can perform any logic or API calls here
         };
 
@@ -67,6 +68,10 @@ const UserTasks = ({route}) =>{
           setSelectedTask([]);
         }
         setAccordionOpen(!accordionOpen);
+      };
+
+      const handleDismissKeyboard = () => {
+        Keyboard.dismiss();
       };
 
       const [loaded] = useFonts({
@@ -80,6 +85,7 @@ const UserTasks = ({route}) =>{
 
       return (
         <>
+        <TouchableWithoutFeedback onPress={handleDismissKeyboard}>
         <SafeAreaView style={styles.container}>
             <StatusBar/>
             <View style={styles.container}>
@@ -120,8 +126,10 @@ const UserTasks = ({route}) =>{
                 placeholder="Enter new task here"
               />
             </View>
-            <View>
-              <Button title="Allocate Task" onPress={handleSubmit} buttonStyle={{ textAlign: 'center', alignItems:'center' }} />
+            <View style={{marginTop: 10, borderRadius: 10}}>
+              <TouchableOpacity onPress={handleSubmit}>
+                <Text style={{ textAlign: 'center', alignItems:'center', justifyContent: 'center', borderWidth: 1, width: 150, padding: 6, color: '#fff', fontWeight: 'bold', backgroundColor: '#007AFF'}}>Allocate Task</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -173,7 +181,7 @@ const UserTasks = ({route}) =>{
                 <View>
                   <Icon name="tasks" size={24} color="black" />
                 </View>
-                <Text style={styles.accordionLabel}>Ongoing Tasks</Text>
+                <Text style={[styles.accordionLabel, styles.gothamBold]}> Ongoing Tasks</Text>
               </TouchableOpacity>
               
             {/* Accordion Content */}
@@ -186,13 +194,13 @@ const UserTasks = ({route}) =>{
                     key={task.id}
                     style={styles.taskItem}
                   >
-                      <View style={styles.taskCheckBox}>
+                      {/* <View style={styles.taskCheckBox}>
                         {task.checked ? (
                           <Icon name="check-square-o" size={20} color="black" />
                         ) : (
                           <Icon name="square-o" size={20} color="black" />
                         )}
-                      </View>
+                      </View> */}
                       <View style={styles.taskContent}>
                         <Text style={styles.taskText}>{task.title}</Text>
                         <View style={styles.taskBadges}>
@@ -217,6 +225,7 @@ const UserTasks = ({route}) =>{
             <Icon name="arrow-left" size={25} color="black" />
         </TouchableOpacity>
         </SafeAreaView>
+        </TouchableWithoutFeedback>
         </>
     ) 
 }
