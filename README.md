@@ -8,7 +8,7 @@
         <li><a href="#team-members">Team Members</a></li>
       </ul>
     </li>
-    <li><a href='#photos'>Photos</a></li>
+    <li><a href='#showcase'>Showcase</a></li>
   </ol>
 
 <br/>
@@ -28,7 +28,6 @@
 
 * <a href="https://docs.expo.dev/"><img width="26px" src="./assets/favicon.png"/></a>
 * <a href="https://docs.pmnd.rs/react-three-fiber/getting-started/introduction.org/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="26px"></a>
-* <a href="https://drei.pmnd.rs/"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/threejs/threejs-original.svg" width="26px"></a>
 * <a href="https://firebase.google.com/?gclid=CjwKCAiA68ebBhB-EiwALVC-Nu9CUOHBl_f4ytQaPMxt6hrueI-AQV3jTr1F-8u7dtfenil2eMGkNhoCH2YQAvD_BwE&gclsrc=aw.ds"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/firebase/firebase-plain.svg" width="26px"></a>
 
 <br/>
@@ -41,3 +40,15 @@
 | Sng Yue Wei, Rachel            | rachel.sng.2021  | rrachelsng@gmail.com    |
 | Adam Tan          | adam.tan.2021  |  adamft.2021@scis.smu.edu.sg   |
 | Poo Jun Sui            | junsui.poo.2021  | junsui.poo.2021@scis.smu.edu.sg   |
+
+<br/>
+
+### Showcase
+
+<img src="./assets/showcase/LoginPage.jpg">
+![]('./assets/showcase/AnimalSelectionPage.gif')
+<img src="./assets/showcase/HomePage.jpg">
+<img src="./assets/showcase/RewardsPage.jpg">
+<img src="./assets/showcase/ProfilePage.jpg">
+<img src="./assets/showcase/MyFriendsPage.jpg">
+<img src="./assets/showcase/FriendsHomePage.jpg">
