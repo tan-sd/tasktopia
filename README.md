@@ -46,7 +46,7 @@
 ### Showcase
 
 <img src="./assets/showcase/LoginPage.jpg">
-![]('./assets/showcase/AnimalSelectionPage.gif')
+![](assets/showcase/AnimalSelectionPage.gif)
 <img src="./assets/showcase/HomePage.jpg">
 <img src="./assets/showcase/RewardsPage.jpg">
 <img src="./assets/showcase/ProfilePage.jpg">
