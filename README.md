@@ -45,9 +45,17 @@
 
 ### Showcase
 
-![Login Page](assets/showcase/LoginPage.jpg)
-![Animal Selection Page](assets/showcase/AnimalSelectionPage.gif)
-![Login Page](assets/showcase/RewardsPage.jpg)
-![Login Page](assets/showcase/ProfilePage.jpg)
-![Login Page](assets/showcase/MyFriendsPage.jpg)
-![Login Page](assets/showcase/FriendsHomePage.jpg)
+<p float="left">
+  <img src="assets/showcase/LoginPage.jpg" alt="Login Page" width="400" />
+  <img src="assets/showcase/AnimalSelectionPage.gif" alt="Animal Selection Page" width="400" />
+</p>
+
+<p float="left">
+  <img src="assets/showcase/RewardsPage.jpg" alt="Rewards Page" width="400" />
+  <img src="assets/showcase/ProfilePage.jpg" alt="Profile Page" width="400" />
+</p>
+
+<p float="left">
+  <img src="assets/showcase/MyFriendsPage.jpg" alt="My Friends Page" width="400" />
+  <img src="assets/showcase/FriendsHomePage.jpg" alt="Friends Home Page" width="400" />
+</p>
