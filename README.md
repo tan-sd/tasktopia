@@ -45,10 +45,9 @@
 
 ### Showcase
 
-<img src="./assets/showcase/LoginPage.jpg">
-![](assets/showcase/AnimalSelectionPage.gif)
-<img src="./assets/showcase/HomePage.jpg">
-<img src="./assets/showcase/RewardsPage.jpg">
-<img src="./assets/showcase/ProfilePage.jpg">
-<img src="./assets/showcase/MyFriendsPage.jpg">
-<img src="./assets/showcase/FriendsHomePage.jpg">
+![Login Page](assets/showcase/LoginPage.jpg)
+![Animal Selection Page](assets/showcase/AnimalSelectionPage.gif)
+![Login Page](assets/showcase/RewardsPage.jpg)
+![Login Page](assets/showcase/ProfilePage.jpg)
+![Login Page](assets/showcase/MyFriendsPage.jpg)
+![Login Page](assets/showcase/FriendsHomePage.jpg)
