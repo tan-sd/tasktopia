@@ -45,17 +45,21 @@
 
 ### Showcase
 
-<p float="left">
-  <img src="assets/showcase/LoginPage.jpg" alt="Login Page" width="400" />
-  <img src="assets/showcase/AnimalSelectionPage.gif" alt="Animal Selection Page" width="400" />
+<p align="center">
+  <img src="assets/showcase/LoginPage.jpg" alt="Login Page" width="300" />
+  <img src="assets/showcase/AnimalSelectionPage.gif" alt="Animal Selection Page" width="300" />
 </p>
 
-<p float="left">
-  <img src="assets/showcase/RewardsPage.jpg" alt="Rewards Page" width="400" />
-  <img src="assets/showcase/ProfilePage.jpg" alt="Profile Page" width="400" />
+<p align="center">
+  <img src="assets/showcase/HomePage.jpg" alt="Home Page" width="300" />
+    <img src="assets/showcase/RewardsPage.jpg" alt="Rewards Page" width="300" />
 </p>
 
-<p float="left">
-  <img src="assets/showcase/MyFriendsPage.jpg" alt="My Friends Page" width="400" />
-  <img src="assets/showcase/FriendsHomePage.jpg" alt="Friends Home Page" width="400" />
+<p align="center">
+  <img src="assets/showcase/ProfilePage.jpg" alt="Profile Page" width="300" />
+  <img src="assets/showcase/MyFriendsPage.jpg" alt="My Friends Page" width="300" />
+</p>
+
+<p align="center">
+  <img src="assets/showcase/FriendsHomePage.jpg" alt="Friends Home Page" width="300" />
 </p>
